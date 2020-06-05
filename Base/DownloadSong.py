@@ -98,8 +98,11 @@ def downloadSong(download_dir, log_file, song_info, test=0):
 
     # Download Song
     try:
-        print("Downloading '{0}'.....".format(name))
         dec_url = saavnAPI.decrypt_url(song_info['url'])
+        if dec_url is None:
+            return '-1'
+
+        print("Downloading '{0}'.....".format(name))
 
         raw_data = requests.get(dec_url, stream=True)
         with open(name_with_path, "wb") as raw_song:
