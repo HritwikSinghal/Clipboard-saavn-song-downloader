@@ -26,12 +26,15 @@ def start(test=0):
     download_dir = inputDownloadDir(test)
 
     log_file = tools.createLogFile(download_dir)
+    try:
+        while True:
+            print('\nWaiting for url from clipboard....')
+            url = pyperclip.waitForPaste()
+            pyperclip.copy('')
 
-    while True:
-        print('\nWaiting for url from clipboard....')
-        url = pyperclip.waitForPaste()
-        pyperclip.copy('')
-
-        if str(url).startswith('https://www.jiosaavn.com'):
-            print('got url: ', url)
-            DownloadSong.start(download_dir, url, log_file, test=test)
+            if str(url).startswith('https://www.jiosaavn.com'):
+                print('got url: ', url)
+                DownloadSong.start(download_dir, url, log_file, test=test)
+    except:
+        print("Exiting....")
+        exit(0)
