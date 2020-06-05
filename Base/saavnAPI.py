@@ -25,6 +25,7 @@ def decrypt_url(url):
     enc_url = base64.b64decode(url.strip())
     dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
     dec_url = re.sub('_96.mp4', '_320.mp3', dec_url)
+    print(dec_url)
 
     try:
         aac_url = dec_url[:]
