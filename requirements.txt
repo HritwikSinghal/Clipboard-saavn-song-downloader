@@ -3,3 +3,4 @@ bs4
 mutagen
 html5lib
 pyperclip
+pyDes
