@@ -11,8 +11,10 @@ def start(test=0):
     # download_dir = os.path.expandvars('%userprofile%/Downloads/')  # where to put it
     # https://stackoverflow.com/questions/23255186/download-under-users-profile-directory
 
-    download_dir = os.path.expanduser("~/Downloads/")
-    print("Download dir is: ", download_dir)
+    download_dir = os.path.expanduser("~/Downloads/Clipboard-saavn-song-downloader")
+    if not os.path.isdir(download_dir):
+        os.mkdir(download_dir)
+    print("Songs will be Downloaded to: ", download_dir)
     # https://stackoverflow.com/questions/4028904/how-to-get-the-home-directory-in-python
 
     log_file = tools.createLogFile(download_dir)

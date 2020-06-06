@@ -13,31 +13,20 @@ def start(test=0):
             For more info, visit https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
         """)
 
+        print("Starting Program....")
+        main.start(test)
+
+        print("""
+                If there were errors during running this program, please upload log file
+                named 'Clipboard-saavn-song-downloader_LOGS.txt' in each dir and open an issue on github
+                you can find those log files by using default search in folders or by manually
+                finding each.
+            """)
         print('''
-            Warning: This program is in early stages so it may download wrong song sometimes.
-                        Enter 1 TO RUN OR 0 TO EXIT
-        ''')
-
-        x = input()
-
-        if x == '1':
-            print("Starting Program....")
-            main.start(test)
-
-            print("""
-                    If there were errors during running this program, please upload log file
-                    named 'Clipboard-saavn-song-downloader_LOGS.txt' in each dir and open an issue on github
-                    you can find those log files by using default search in folders or by manually
-                    finding each.
-                """)
-            print('''
-                    Thank you for Using this program....
-                    By Hritwik
-                    https://github.com/HritwikSinghal
-                ''')
-        else:
-            print("Exiting....")
-            exit(0)
+                Thank you for Using this program....
+                By Hritwik
+                https://github.com/HritwikSinghal
+            ''')
 
 
 if os.path.isfile('Base/test_bit.py'):
