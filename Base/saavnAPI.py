@@ -25,7 +25,6 @@ def decrypt_url(url):
     enc_url = base64.b64decode(url.strip())
     dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
     dec_url = re.sub('_96.mp4', '_320.mp3', dec_url)
-    # print(dec_url)
 
     try:
         aac_url = dec_url[:]
@@ -41,7 +40,7 @@ def decrypt_url(url):
         # check for 320 mp3 on h.saavncdn.com
         r = requests.head(h_url, allow_redirects=True)
         if str(r.status_code) == '200':
-            return aac_url
+            return h_url
 
         # ---------------------------------------------------------#
 
@@ -55,7 +54,7 @@ def decrypt_url(url):
         h_url = h_url.replace('_320.mp3', '_160.mp3')
         r = requests.head(h_url, allow_redirects=True)
         if str(r.status_code) == '200':
-            return aac_url
+            return h_url
 
         # ---------------------------------------------------------#
         # check for 128 mp3 on aac.saavncdn.com
@@ -68,7 +67,7 @@ def decrypt_url(url):
         h_url = h_url.replace('_320.mp3', '.mp3')
         r = requests.head(h_url, allow_redirects=True)
         if str(r.status_code) == '200':
-            return aac_url
+            return h_url
 
         # ---------------------------------------------------------#
         # ---------------------------------------------------------#
@@ -89,7 +88,7 @@ def decrypt_url(url):
         # # check for 320 m4a on h.saavncdn.com
         # r = requests.head(h_url, allow_redirects=True)
         # if str(r.status_code) == '200':
-        #     return aac_url
+        #     return h_url
         #
         # # ---------------------------------------------------------#
         #
@@ -103,7 +102,7 @@ def decrypt_url(url):
         # h_url = h_url.replace('_320.mp4', '_160.mp4')
         # r = requests.head(h_url, allow_redirects=True)
         # if str(r.status_code) == '200':
-        #     return aac_url
+        #     return h_url
         #
         # # ---------------------------------------------------------#
         # # check for 128 m4a on aac.saavncdn.com
@@ -116,7 +115,7 @@ def decrypt_url(url):
         # h_url = h_url.replace('_320.mp4', '.mp4')
         # r = requests.head(h_url, allow_redirects=True)
         # if str(r.status_code) == '200':
-        #     return aac_url
+        #     return h_url
 
     except:
         return None

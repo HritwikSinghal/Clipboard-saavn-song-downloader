@@ -103,8 +103,6 @@ def downloadSong(download_dir, log_file, song_info, test=0):
     # Download Song
     try:
         dec_url = saavnAPI.decrypt_url(song_info['url'])
-        print(dec_url)
-        x = input()
 
         if dec_url is None:
             return '-1'
