@@ -34,7 +34,7 @@ def decrypt_url(url):
         # ---------------------------------------------------------#
 
         # check for 320 mp3 on aac.saavncdn.com
-        r = requests.head(aac_url, allow_redirects=True)
+        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
         if str(r.status_code) == '200':
             return aac_url
 
@@ -47,7 +47,7 @@ def decrypt_url(url):
 
         # check for 160 mp3 on aac.saavncdn.com
         aac_url = aac_url.replace('_320.mp3', '_160.mp3')
-        r = requests.head(h_url, allow_redirects=True)
+        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
         if str(r.status_code) == '200':
             return aac_url
 
@@ -60,7 +60,7 @@ def decrypt_url(url):
         # ---------------------------------------------------------#
         # check for 128 mp3 on aac.saavncdn.com
         aac_url = aac_url.replace('_320.mp3', '.mp3')
-        r = requests.head(h_url, allow_redirects=True)
+        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
         if str(r.status_code) == '200':
             return aac_url
 
@@ -95,7 +95,7 @@ def decrypt_url(url):
         #
         # # check for 160 m4a on aac.saavncdn.com
         # aac_url = aac_url.replace('_320.mp4', '_160.mp4')
-        # r = requests.head(h_url, allow_redirects=True)
+        # r = requests.head(aac_url, allow_redirects=True)
         # if str(r.status_code) == '200':
         #     return aac_url
         #
@@ -108,7 +108,7 @@ def decrypt_url(url):
         # # ---------------------------------------------------------#
         # # check for 128 m4a on aac.saavncdn.com
         # aac_url = aac_url.replace('_320.mp4', '.mp4')
-        # r = requests.head(h_url, allow_redirects=True)
+        # r = requests.head(aac_url, allow_redirects=True)
         # if str(r.status_code) == '200':
         #     return aac_url
         #

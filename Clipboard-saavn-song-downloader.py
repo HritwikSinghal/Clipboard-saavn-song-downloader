@@ -5,7 +5,7 @@ from Base import main
 
 def start(test=0):
     if test:
-        main.start(1)
+        main.start(test=1)
     else:
         print("""
             This program will Download songs from Jiosaavn based on the links you copy on your clipboard. 

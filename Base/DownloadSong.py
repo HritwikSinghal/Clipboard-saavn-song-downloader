@@ -18,6 +18,10 @@ from Tags import artistName
 from Tags import composerName
 from Tags import songTitle
 
+user_agent = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0'
+}
+
 
 def getCertainKeys(song_info):
     # these are the keys which are useful to us
@@ -99,12 +103,15 @@ def downloadSong(download_dir, log_file, song_info, test=0):
     # Download Song
     try:
         dec_url = saavnAPI.decrypt_url(song_info['url'])
+        print(dec_url)
+        x = input()
+
         if dec_url is None:
             return '-1'
 
         print("Downloading '{0}'.....".format(name))
 
-        raw_data = requests.get(dec_url, stream=True)
+        raw_data = requests.get(dec_url, stream=True, headers=user_agent)
         with open(name_with_path, "wb") as raw_song:
             for chunk in raw_data.iter_content(chunk_size=2048):
                 # writing one chunk at a time to mp3 file
@@ -130,10 +137,13 @@ def addTags(downloaded_song_name_with_path, download_dir, log_file, song_info, t
         tags = easyid3(downloaded_song_name_with_path)
     except:
         print("This Song has no tags. Creating tags...")
-
-        tags = mutagen.File(downloaded_song_name_with_path, easy=True)
-        tags.add_tags()
-        print("Tags created.")
+        try:
+            tags = mutagen.File(downloaded_song_name_with_path, easy=True)
+            tags.add_tags()
+            print("Tags created.")
+        except:
+            tools.writeAndPrintLog(log_file, "\nError creating tags\n", test=test)
+            return
 
     addDateLenOrg.start(tags, song_info)
     albumName.start(tags, song_info)
@@ -145,15 +155,11 @@ def addTags(downloaded_song_name_with_path, download_dir, log_file, song_info, t
 
 def start(download_dir, url, log_file, test=0):
     list_of_songs_with_info = saavnAPI.start(url, log_file, test=test)
-    # tools.printList(list_of_songs_with_info)
 
     for song in list_of_songs_with_info:
         song_info = getCertainKeys(song)
         if song_info is None:
             return None
-
-        # print(song_info)
-        # x = input()
 
         downloaded_song_name_with_path = downloadSong(download_dir, log_file, song_info, test=test)
         if downloaded_song_name_with_path == '-1':
