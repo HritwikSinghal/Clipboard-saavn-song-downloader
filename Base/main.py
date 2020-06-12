@@ -11,7 +11,7 @@ def start(test=0):
     # download_dir = os.path.expandvars('%userprofile%/Downloads/')  # where to put it
     # https://stackoverflow.com/questions/23255186/download-under-users-profile-directory
 
-    download_dir = os.path.expanduser("~/Downloads/Music/Downloaded-Songs")
+    download_dir = os.path.expanduser("~/Downloads/Downloaded-Songs")
     if not os.path.isdir(download_dir):
         os.mkdir(download_dir)
     print("Songs will be Downloaded to: ", download_dir)
