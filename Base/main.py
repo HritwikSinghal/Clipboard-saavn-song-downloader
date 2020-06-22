@@ -18,6 +18,7 @@ def start(test=0):
     print("Songs will be Downloaded to: ", download_dir)
 
     log_file = tools.createLogFile(download_dir)
+
     try:
         while True:
             print('\nWaiting for url from clipboard....')

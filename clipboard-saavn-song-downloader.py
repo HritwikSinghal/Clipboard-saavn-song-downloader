@@ -1,7 +1,6 @@
 import os
 
-from Base import main
-from Base import new
+from Base import main, saavnAPI, DownloadSong
 
 
 def start(test=0):
@@ -37,7 +36,10 @@ else:
 
 # start(test=test)
 
-new.start()
+# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/song/tum-hi-ho/EToxUyFpcwQ', 'x', test=test)
+DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/album/aashiqui-2/-iNdCmFNV9o_', 'x', test=test)
+# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/featured/monday-mania---hindi/tjgzzaeg32xuOxiEGmm6lQ__', 'x', test=test)
+# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/artist/arijit-singh-/LlRWpHzy3Hk_', 'x', test=test)
 
 # todo: use https instead of http in decrypt_url in saavnApi
 # todo: update lyrics function in saavnApi

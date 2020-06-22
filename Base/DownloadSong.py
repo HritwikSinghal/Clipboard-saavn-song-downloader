@@ -1,6 +1,6 @@
 import html
+import json
 import os
-import re
 import urllib
 import urllib.request
 import urllib.request
@@ -10,7 +10,6 @@ from mutagen.mp4 import MP4
 from mutagen.mp4 import MP4Cover
 
 from Base import saavnAPI
-from Base import tools
 
 headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
@@ -41,32 +40,31 @@ def addtags(filename, json_data, log_file, test=0):
     audio.save()
 
 
-def downloadSong(songs_json, log_file, test=0):
-    for song_info in songs_json['songs']:
-        keys = {}
+def downloadSong(song_info, log_file, download_dir, test=0):
+    keys = {}
 
-        dec_url = saavnAPI.decrypt_url(song_info['more_info']['encrypted_media_url'], test=test)
-        filename = song_info['title'] + '.m4a'
-        location = os.path.join('/home/hritwik/Videos', filename)
+    dec_url = saavnAPI.decrypt_url(song_info['more_info']['encrypted_media_url'], test=test)
+    filename = song_info['title'] + '.m4a'
+    location = os.path.join(download_dir, filename)
 
-        raw_data = requests.get(dec_url, stream=True, headers=headers)
-        with open(location, "wb") as raw_song:
-            for chunk in raw_data.iter_content(chunk_size=2048):
-                if chunk:
-                    raw_song.write(chunk)
+    raw_data = requests.get(dec_url, stream=True, headers=headers)
+    with open(location, "wb") as raw_song:
+        for chunk in raw_data.iter_content(chunk_size=2048):
+            if chunk:
+                raw_song.write(chunk)
 
-        keys["song"] = song_info["title"]
-        keys["primary_artists"] = song_info["more_info"]["artistMap"]["primary_artists"][0]["name"]
-        keys["album"] = song_info["more_info"]["album"]
-        keys["singers"] = ", ".join(
-            [artist["name"] for artist in song_info["more_info"]["artistMap"]["primary_artists"]])
-        keys["music"] = song_info["more_info"]["music"]
-        keys["starring"] = ""
-        keys['year'] = song_info['year']
-        keys["label"] = song_info["more_info"]["label"]
-        keys['image'] = song_info['image']
+    keys["song"] = song_info["title"]
+    keys["primary_artists"] = song_info["more_info"]["artistMap"]["primary_artists"][0]["name"]
+    keys["album"] = song_info["more_info"]["album"]
+    keys["singers"] = ", ".join(
+        [artist["name"] for artist in song_info["more_info"]["artistMap"]["primary_artists"]])
+    keys["music"] = song_info["more_info"]["music"]
+    keys["starring"] = ""
+    keys['year'] = song_info['year']
+    keys["label"] = song_info["more_info"]["label"]
+    keys['image'] = song_info['image']
 
-        addtags(location, keys, log_file, test=test)
+    return location, keys
 
 
 # def downloadSong(download_dir, log_file, song_info, test=0):
@@ -124,16 +122,29 @@ def downloadSong(songs_json, log_file, test=0):
 
 
 def start(download_dir, url, log_file, test=0):
-    list_of_songs_with_info = saavnAPI.start(url, log_file, test=test)
+    # list_of_songs_with_info = saavnAPI.start(url, log_file, test=test)
+    songs_json = saavnAPI.start(url, log_file, test=test)
 
-    for song in list_of_songs_with_info:
-        song_info = getCertainKeys(song)
-        if song_info is None:
-            return None
+    url_type = url.split('/')[3]
+    all_types = {
+        'artist': 'topSongs',
+        'song': 'songs',
+        'album': 'list',
+        'featured': 'list'
+    }
 
-        downloaded_song_name_with_path = downloadSong(download_dir, log_file, song_info, test=test)
-        if downloaded_song_name_with_path == '-1':
-            continue
+    for song_info in songs_json[all_types[url_type]]:
+        print(song_info)
+        # for testing
 
-        addTags(downloaded_song_name_with_path, download_dir, log_file, song_info, test=test)
-        print()
+        if test:
+            with open('song.txt', 'w+') as ab:
+                json.dump(song_info, ab, indent=4)
+
+        location, keys = downloadSong(song_info, download_dir, log_file, test=test)
+
+        print(location)
+        print(keys)
+        x = input()
+
+        addtags(location, keys, log_file, test=test)
