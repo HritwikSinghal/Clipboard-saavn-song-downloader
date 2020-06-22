@@ -34,12 +34,4 @@ if os.path.isfile('Base/test_bit.py'):
 else:
     test = 0
 
-# start(test=test)
-from Base import test_bit
-
-test_bit.start()
-
-# todo: use https instead of http in decrypt_url in saavnApi
-# todo: update lyrics function in saavnApi
-# todo: find about MITM attack and see song file in monuyadav for payload
-# todo:
+start(test=test)
