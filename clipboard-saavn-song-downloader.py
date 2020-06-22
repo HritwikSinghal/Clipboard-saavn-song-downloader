@@ -1,6 +1,7 @@
 import os
 
 from Base import main
+from Base import new
 
 
 def start(test=0):
@@ -34,9 +35,9 @@ if os.path.isfile('Base/test_bit.py'):
 else:
     test = 0
 
-from Base import test_bit
+# start(test=test)
 
-test_bit.start()
+new.start()
 
 # todo: use https instead of http in decrypt_url in saavnApi
 # todo: update lyrics function in saavnApi

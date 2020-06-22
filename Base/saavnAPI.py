@@ -1,30 +1,39 @@
-import ast
 import base64
 import json
-import os
 import re
 import traceback
-from Base import tools
 
 import requests
 import urllib3.exceptions
 from bs4 import BeautifulSoup
 from pyDes import *
 
+from Base import tools
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-user_agent = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0'
+headers = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
+    'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
+    'origin': 'https://www.jiosaavn.com'
+}
+
+api_url = {
+    'artist': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=artist&p=&n_song=10&n_album=14&sub_type=&category=&sort_order=&includeMetaTags=0&ctx=web6dot0&api_version=4&',
+    'album': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=album&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
+    'playlist': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=playlist&p=1&n=20&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
+    'song': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=song&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
+    'top_search_results': 'https://www.jiosaavn.com/api.php?__call=content.getTopSearches&ctx=web6dot0&api_version=4&_format=json&_marker=0'
 }
 
 
 # -------------------------------------------#
 
-def decrypt_url(url):
+def decrypt_url(url, test=0):
     des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
     enc_url = base64.b64decode(url.strip())
     dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
-    dec_url = re.sub('_96.mp4', '_320.mp3', dec_url)
+    dec_url = re.sub('_96.mp4', '_320.mp4', dec_url)
 
     try:
         aac_url = dec_url[:]
@@ -32,95 +41,128 @@ def decrypt_url(url):
 
         # ---------------------------------------------------------#
 
-        # check for 320 mp3 on aac.saavncdn.com
-        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
+        # check for 320 m4a on aac.saavncdn.com
+        r = requests.head(aac_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return aac_url
 
-        # check for 320 mp3 on h.saavncdn.com
+        # check for 320 m4a on h.saavncdn.com
         r = requests.head(h_url, allow_redirects=True)
         if str(r.status_code) == '200':
             return h_url
 
         # ---------------------------------------------------------#
 
-        # check for 160 mp3 on aac.saavncdn.com
-        aac_url = aac_url.replace('_320.mp3', '_160.mp3')
-        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
+        # check for 160 m4a on aac.saavncdn.com
+        aac_url = aac_url.replace('_320.mp4', '_160.mp4')
+        r = requests.head(aac_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return aac_url
 
-        # check for 160 mp3 on h.saavncdn.com
-        h_url = h_url.replace('_320.mp3', '_160.mp3')
+        # check for 160 m4a on h.saavncdn.com
+        h_url = h_url.replace('_320.mp4', '_160.mp4')
         r = requests.head(h_url, allow_redirects=True)
         if str(r.status_code) == '200':
             return h_url
 
         # ---------------------------------------------------------#
-        # check for 128 mp3 on aac.saavncdn.com
-        aac_url = aac_url.replace('_320.mp3', '.mp3')
-        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
+        # check for 128 m4a on aac.saavncdn.com
+        aac_url = aac_url.replace('_320.mp4', '.mp4')
+        r = requests.head(aac_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return aac_url
 
-        # check for 128 mp3 on h.saavncdn.com
-        h_url = h_url.replace('_320.mp3', '.mp3')
+        # check for 128 m4a on h.saavncdn.com
+        h_url = h_url.replace('_320.mp4', '.mp4')
         r = requests.head(h_url, allow_redirects=True)
         if str(r.status_code) == '200':
             return h_url
-
-        # ---------------------------------------------------------#
-        # ---------------------------------------------------------#
-        # ---------------------------------------------------------#
-        # now trying for m4a
-        # Edit: skipped m4a support as of now
-
-        # aac_url = dec_url[:].replace(".mp3", '.mp4')
-        # h_url = aac_url.replace('aac.saavncdn.com', 'h.saavncdn.com')
-        #
-        # # ---------------------------------------------------------#
-        #
-        # # check for 320 m4a on aac.saavncdn.com
-        # r = requests.head(aac_url, allow_redirects=True)
-        # if str(r.status_code) == '200':
-        #     return aac_url
-        #
-        # # check for 320 m4a on h.saavncdn.com
-        # r = requests.head(h_url, allow_redirects=True)
-        # if str(r.status_code) == '200':
-        #     return h_url
-        #
-        # # ---------------------------------------------------------#
-        #
-        # # check for 160 m4a on aac.saavncdn.com
-        # aac_url = aac_url.replace('_320.mp4', '_160.mp4')
-        # r = requests.head(aac_url, allow_redirects=True)
-        # if str(r.status_code) == '200':
-        #     return aac_url
-        #
-        # # check for 160 m4a on h.saavncdn.com
-        # h_url = h_url.replace('_320.mp4', '_160.mp4')
-        # r = requests.head(h_url, allow_redirects=True)
-        # if str(r.status_code) == '200':
-        #     return h_url
-        #
-        # # ---------------------------------------------------------#
-        # # check for 128 m4a on aac.saavncdn.com
-        # aac_url = aac_url.replace('_320.mp4', '.mp4')
-        # r = requests.head(aac_url, allow_redirects=True)
-        # if str(r.status_code) == '200':
-        #     return aac_url
-        #
-        # # check for 128 m4a on h.saavncdn.com
-        # h_url = h_url.replace('_320.mp4', '.mp4')
-        # r = requests.head(h_url, allow_redirects=True)
-        # if str(r.status_code) == '200':
-        #     return h_url
 
     except:
+        if test:
+            traceback.print_exc()
         return None
 
 
+def getId(url):
+    id = str(url).split('/')[-1]
+    return id
+
+
+def getAlbumDetails(url):
+    id = getId(url)
+    url = api_url['album'].format(id)
+
+    res = requests.get(url, headers=headers)
+    data = json.loads(str(res.text).strip())
+
+    with open('song.txt', 'w+') as ab:
+        json.dump(data, ab, indent=2)
+
+
+def getArtistDetails(url):
+    id = getId(url)
+    url = api_url['artist'].format(id)
+
+    res = requests.get(url, headers=headers)
+    data = json.loads(str(res.text).strip())
+
+    with open('song.txt', 'w+') as ab:
+        json.dump(data, ab, indent=2)
+
+
+def getPlaylistDetails(url):
+    id = getId(url)
+    url = api_url['playlist'].format(id)
+
+    res = requests.get(url, headers=headers)
+    data = json.loads(str(res.text).strip())
+
+    with open('song.txt', 'w+') as ab:
+        json.dump(data, ab, indent=2)
+
+
+def getSongDetails(url):
+    id = getId(url)
+    url = api_url['song'].format(id)
+    res = requests.get(url, headers=headers)
+
+    data = json.loads(str(res.text).strip())
+    with open('song.txt', 'w+') as ab:
+        json.dump(data, ab, indent=2)
+
+    return data
+
+
+def fixContent(data):
+    # old
+    # data = re.sub(r'<!DOCTYPE html>\s*<.*>?', '', data)
+    # return data
+
+    fixed_json = [x for x in data.splitlines() if x.strip().startswith('{')][0]
+    return fixed_json
+
+
+def start(url, log_file, test=0):
+    type = url.split('/')[3]
+    url = api_url[type].format(getId(url))
+    res = requests.get(url, headers=headers)
+
+    data = str(res.text).strip()
+
+    try:
+        data = json.loads(data)
+    except:
+        data = fixContent(data)
+        data = json.loads(data)
+
+    with open('song.txt', 'w+') as ab:
+        json.dump(data, ab, indent=4)
+
+    downloadSong(data)
+
+
+# Obsolete
 def get_lyrics(url):
     try:
         if '/song/' in url:
@@ -137,12 +179,12 @@ def get_lyrics(url):
         return
 
 
-def start(url, log_file, test=0):
+def old_start(url, log_file, test=0):
     # returns list of songs from search url.
     # each element of list is a dict in json format with song data
 
     try:
-        res = requests.get(url, headers=user_agent, data=[('bitrate', '320')])
+        res = requests.get(url, headers=headers, data=[('bitrate', '320')])
 
         soup = BeautifulSoup(res.text, "html5lib")
         all_songs_info = soup.find_all('div', attrs={"class": "hide song-json"})
