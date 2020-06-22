@@ -1,4 +1,3 @@
-import ast
 import base64
 import json
 import os
@@ -13,8 +12,18 @@ from pyDes import *
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-user_agent = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0'
+headers = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
+    'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
+    'origin': 'https://www.jiosaavn.com'
+}
+
+api_url = {
+    'artist': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=artist&p=&n_song=10&n_album=14&sub_type=&category=&sort_order=&includeMetaTags=0&ctx=web6dot0&api_version=4&',
+    'album': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=album&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
+    'playlist': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=playlist&p=1&n=20&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
+    'song': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=song&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
+    'top_search_results': 'https://www.jiosaavn.com/api.php?__call=content.getTopSearches&ctx=web6dot0&api_version=4&_format=json&_marker=0'
 }
 
 
@@ -33,7 +42,7 @@ def decrypt_url(url):
         # ---------------------------------------------------------#
 
         # check for 320 mp3 on aac.saavncdn.com
-        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
+        r = requests.head(aac_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return aac_url
 
@@ -46,7 +55,7 @@ def decrypt_url(url):
 
         # check for 160 mp3 on aac.saavncdn.com
         aac_url = aac_url.replace('_320.mp3', '_160.mp3')
-        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
+        r = requests.head(aac_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return aac_url
 
@@ -59,7 +68,7 @@ def decrypt_url(url):
         # ---------------------------------------------------------#
         # check for 128 mp3 on aac.saavncdn.com
         aac_url = aac_url.replace('_320.mp3', '.mp3')
-        r = requests.head(aac_url, allow_redirects=True, headers=user_agent)
+        r = requests.head(aac_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return aac_url
 
@@ -142,7 +151,7 @@ def start(url, log_file, test=0):
     # each element of list is a dict in json format with song data
 
     try:
-        res = requests.get(url, headers=user_agent, data=[('bitrate', '320')])
+        res = requests.get(url, headers=headers, data=[('bitrate', '320')])
 
         soup = BeautifulSoup(res.text, "html5lib")
         all_songs_info = soup.find_all('div', attrs={"class": "hide song-json"})

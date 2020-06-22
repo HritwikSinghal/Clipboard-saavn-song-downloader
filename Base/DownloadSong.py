@@ -18,8 +18,10 @@ from Tags import artistName
 from Tags import composerName
 from Tags import songTitle
 
-user_agent = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0'
+headers = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
+    'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
+    'origin': 'https://www.jiosaavn.com'
 }
 
 
@@ -109,7 +111,7 @@ def downloadSong(download_dir, log_file, song_info, test=0):
 
         print("Downloading '{0}'.....".format(name))
 
-        raw_data = requests.get(dec_url, stream=True, headers=user_agent)
+        raw_data = requests.get(dec_url, stream=True, headers=headers)
         with open(name_with_path, "wb") as raw_song:
             for chunk in raw_data.iter_content(chunk_size=2048):
                 # writing one chunk at a time to mp3 file
