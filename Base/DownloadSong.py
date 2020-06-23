@@ -21,7 +21,7 @@ headers = {
 def addtags(filename, json_data, log_file, test=0):
     audio = MP4(filename)
 
-    audio['\xa9nam'] = html.unescape(str(json_data['song']))
+    audio['\xa9nam'] = html.unescape(str(json_data['title']))
     audio['\xa9ART'] = html.unescape(str(json_data['primary_artists']))
     audio['\xa9alb'] = html.unescape(str(json_data['album']))
     audio['aART'] = html.unescape(str(json_data['singers']))
@@ -39,10 +39,60 @@ def addtags(filename, json_data, log_file, test=0):
     audio.save()
 
 
-def downloadSong(song_info, log_file, download_dir, test=0):
-    keys = {}
+def fix(song_info):
+    song_info["album"] = tools.removeGibberish(song_info["album"]).strip()
+    song_info["album"] = song_info["album"] + ' (' + song_info['year'] + ')'
 
-    dec_url = saavnAPI.decrypt_url(song_info['more_info']['encrypted_media_url'], test=test)
+    oldArtist = song_info["primary_artists"]
+    newArtist = tools.removeGibberish(oldArtist)
+    newArtist = tools.divideBySColon(newArtist)
+    newArtist = tools.removeTrailingExtras(newArtist)
+    song_info['primary_artists'] = tools.removeDup(newArtist)
+
+    song_info["singers"] = song_info['primary_artists']
+
+    old_composer = song_info["music"]
+    new_composer = tools.removeGibberish(old_composer)
+    new_composer = tools.divideBySColon(new_composer)
+    new_composer = tools.removeTrailingExtras(new_composer)
+    song_info["music"] = tools.removeDup(new_composer)
+
+    song_info['title'] = tools.removeGibberish(song_info['title'])
+
+    print(json.dumps(song_info, indent=2))
+    x = input()
+
+    # albumName.start(tags, song_info)
+    # artistName.start(tags, song_info)
+    # composerName.start(tags, song_info)
+    # songTitle.start(tags, song_info)
+
+
+def getImpKeys(song_info, log_file, test=0):
+    keys = dict()
+
+    # todo: not listing all artists
+
+    keys["title"] = song_info["title"]
+    keys["primary_artists"] = ", ".join(
+        [artist["name"] for artist in song_info["more_info"]["artistMap"]["primary_artists"]])
+    keys["album"] = song_info["more_info"]["album"]
+    keys["singers"] = keys["primary_artists"]
+    keys["music"] = song_info["more_info"]["music"]
+    keys["starring"] = ";".join(
+        [artist["name"] for artist in song_info["more_info"]["artistMap"]["artists"] if artist['role'] == 'starring'])
+    keys['year'] = song_info['year']
+    keys["label"] = song_info["more_info"]["label"]
+    keys['image'] = song_info['image']
+    keys['encrypted_media_url'] = song_info['more_info']['encrypted_media_url']
+
+    fix(keys)
+
+    return keys
+
+
+def downloadSong(song_info, log_file, download_dir, test=0):
+    dec_url = saavnAPI.decrypt_url(song_info['encrypted_media_url'], test=test)
     filename = song_info['title'] + '.m4a'
     filename = re.sub(r'[?*<>|/\\":]', '', filename)
 
@@ -54,42 +104,7 @@ def downloadSong(song_info, log_file, download_dir, test=0):
             if chunk:
                 raw_song.write(chunk)
 
-    keys["song"] = song_info["title"]
-    keys["primary_artists"] = song_info["more_info"]["artistMap"]["primary_artists"][0]["name"]
-    keys["album"] = song_info["more_info"]["album"]
-    keys["singers"] = ", ".join(
-        [artist["name"] for artist in song_info["more_info"]["artistMap"]["primary_artists"]])
-    keys["music"] = song_info["more_info"]["music"]
-    keys["starring"] = ""
-    keys['year'] = song_info['year']
-    keys["label"] = song_info["more_info"]["label"]
-    keys['image'] = song_info['image']
-
-    fix(keys)
-    return location, keys
-
-
-def fix(song_info):
-    song_info["album"] = tools.removeGibberish(song_info["album"]).strip()
-
-    oldArtist = song_info["primary_artists"]
-    newArtist = tools.removeGibberish(oldArtist)
-    newArtist = tools.divideBySColon(newArtist)
-    newArtist = tools.removeTrailingExtras(newArtist)
-    song_info["primary_artists"] = tools.removeDup(newArtist)
-
-    old_composer = song_info["music"]
-    new_composer = tools.removeGibberish(old_composer)
-    new_composer = tools.divideBySColon(new_composer)
-    new_composer = tools.removeTrailingExtras(new_composer)
-    song_info["music"] = tools.removeDup(new_composer)
-
-    song_info['song'] = tools.removeGibberish(song_info['song'])
-
-    # albumName.start(tags, song_info)
-    # artistName.start(tags, song_info)
-    # composerName.start(tags, song_info)
-    # songTitle.start(tags, song_info)
+    return location
 
 
 def start(download_dir, url, log_file, test=0):
@@ -104,12 +119,11 @@ def start(download_dir, url, log_file, test=0):
     url_type = url.split('/')[3]
 
     for song_info in songs_json[all_types[url_type]]:
-        # print(song_info)
-
         # for testing
         if test:
             with open('song.txt', 'w+') as ab:
                 json.dump(song_info, ab, indent=4)
 
-        location, keys = downloadSong(song_info, download_dir, log_file, test=test)
+        keys = getImpKeys(song_info, log_file, test=test)
+        location = downloadSong(keys, download_dir, log_file, test=test)
         addtags(location, keys, log_file, test=test)
