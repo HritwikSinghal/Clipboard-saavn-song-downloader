@@ -61,6 +61,7 @@ def fix(song_info, test=0):
         # json_data = re.sub(r'.\[\b.*?"\]', "", json_data)
         # actual_album = ''
 
+    song_info['title'] = tools.removeGibberish(song_info['title'])
     song_info["album"] = tools.removeGibberish(song_info["album"]).strip()
     song_info["album"] = song_info["album"] + ' (' + song_info['year'] + ')'
 
@@ -117,7 +118,7 @@ def downloadSong(song_info, download_dir, log_file, test=0):
 
     location = os.path.join(download_dir, filename)
 
-    print("Downloading '{0}'.....".format(filename))
+    print("Downloading '{0}'.....".format(song_info['title']))
     raw_data = requests.get(dec_url, stream=True, headers=headers)
     with open(location, "wb") as raw_song:
         for chunk in raw_data.iter_content(chunk_size=2048):
