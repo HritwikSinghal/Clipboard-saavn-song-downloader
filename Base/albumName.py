@@ -1,5 +1,4 @@
 from Base import tools
-import traceback
 
 
 def fixAlbum(tags, date, album_name):

@@ -7,8 +7,6 @@ import requests
 import urllib3.exceptions
 from pyDes import *
 
-from Base import tools
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 headers = {
@@ -26,11 +24,17 @@ api_url = {
 }
 
 
+def getId(url):
+    id = str(url).split('/')[-1]
+    return id
+
+
 def decrypt_url(url, test=0):
     des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
     enc_url = base64.b64decode(url.strip())
     dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
-    dec_url = re.sub('_96.mp4', '_320.mp4', dec_url)
+
+    dec_url = re.sub('_96.mp4', '_320.mp4', dec_url).replace('http', 'https')
 
     try:
         aac_url = dec_url[:]
@@ -44,7 +48,7 @@ def decrypt_url(url, test=0):
             return aac_url
 
         # check for 320 m4a on h.saavncdn.com
-        r = requests.head(h_url, allow_redirects=True)
+        r = requests.head(h_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return h_url
 
@@ -58,7 +62,7 @@ def decrypt_url(url, test=0):
 
         # check for 160 m4a on h.saavncdn.com
         h_url = h_url.replace('_320.mp4', '_160.mp4')
-        r = requests.head(h_url, allow_redirects=True)
+        r = requests.head(h_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return h_url
 
@@ -71,10 +75,11 @@ def decrypt_url(url, test=0):
 
         # check for 128 m4a on h.saavncdn.com
         h_url = h_url.replace('_320.mp4', '.mp4')
-        r = requests.head(h_url, allow_redirects=True)
+        r = requests.head(h_url, allow_redirects=True, headers=headers)
         if str(r.status_code) == '200':
             return h_url
 
+        return None
     except:
         if test:
             traceback.print_exc()
@@ -104,21 +109,3 @@ def start(url, log_file, test=0):
         data = json.loads(data)
 
     return data
-
-
-def fix(json_data):
-    json_data['album'] = tools.removeGibberish(json_data['album']).strip()
-
-    oldArtist = json_data['singers']
-    newArtist = tools.removeGibberish(oldArtist)
-    newArtist = tools.divideBySColon(newArtist)
-    newArtist = tools.removeTrailingExtras(newArtist)
-    json_data['singers'] = tools.removeDup(newArtist)
-
-    old_composer = json_data['music']
-    new_composer = tools.removeGibberish(old_composer)
-    new_composer = tools.divideBySColon(new_composer)
-    new_composer = tools.removeTrailingExtras(new_composer)
-    json_data['music'] = tools.removeDup(new_composer)
-
-    json_data['title'] = tools.removeGibberish(json_data['title'])

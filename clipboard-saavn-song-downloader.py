@@ -36,10 +36,11 @@ else:
 
 # start(test=test)
 
-# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/song/tum-hi-ho/EToxUyFpcwQ', 'x', test=test)
-DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/album/aashiqui-2/-iNdCmFNV9o_', 'x', test=test)
-# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/featured/monday-mania---hindi/tjgzzaeg32xuOxiEGmm6lQ__', 'x', test=test)
-# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/artist/arijit-singh-/LlRWpHzy3Hk_', 'x', test=test)
+DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/song/muskurane-romantic/QSNSeAdmYWY',
+                   '/home/hritwik/Videos', test=test)
+# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/album/aashiqui-2/-iNdCmFNV9o_', '/home/hritwik/Videos'', test=test)
+# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/featured/monday-mania---hindi/tjgzzaeg32xuOxiEGmm6lQ__', '/home/hritwik/Videos'', test=test)
+# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/artist/arijit-singh-/LlRWpHzy3Hk_', '/home/hritwik/Videos'', test=test)
 
 # todo: use https instead of http in decrypt_url in saavnApi
 # todo: update lyrics function in saavnApi
