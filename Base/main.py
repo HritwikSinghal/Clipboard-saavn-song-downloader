@@ -18,10 +18,12 @@ def start(test=0):
     print("Songs will be Downloaded to: ", download_dir)
 
     log_file = tools.createLogFile(download_dir)
+
     try:
         while True:
             print('\nWaiting for url from clipboard....')
             url = pyperclip.waitForPaste()
+            # url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
             pyperclip.copy('')
 
             if str(url).startswith('https://www.jiosaavn.com'):

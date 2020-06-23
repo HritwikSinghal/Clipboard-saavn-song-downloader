@@ -54,36 +54,6 @@ def removeDup(old_name):
 
 # ---------------------------------------------#
 
-def fixImageUrl(oldUrl):
-    url = str(oldUrl)
-    url = url.replace('150x150', '500x500')
-    return url
-
-
-def printList(myList):
-    print('--------------')
-    for item in myList:
-        print(item)
-    print('--------------\n')
-
-
-# ---------------------------------------------#
-
-
-def isTagPresent(tags, tag_name):
-    if tag_name in tags.keys() and tags[tag_name] != '':
-        return True
-    return False
-
-
-def saveTags(tag_name, tag_value_from_json, tags):
-    tags[tag_name] = tag_value_from_json
-    tags.save()
-    print("Added " + tag_name)
-
-
-# ---------------------------------------------#
-
 def writeAndPrintLog(log_file, line, test=0):
     log_file.write(line)
     traceback.print_exc(file=log_file)

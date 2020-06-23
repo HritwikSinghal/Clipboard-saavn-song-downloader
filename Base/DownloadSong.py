@@ -1,22 +1,15 @@
+import html
 import json
-import re
-import traceback
 import os
-
-import mutagen
-from mutagen.mp3 import MP3
+import re
+import urllib
+import urllib.request
 
 import requests
-from mutagen.easyid3 import EasyID3 as easyid3
+from mutagen.mp4 import *
 
 from Base import saavnAPI
 from Base import tools
-from Tags import addDateLenOrg
-from Tags import albumArt
-from Tags import albumName
-from Tags import artistName
-from Tags import composerName
-from Tags import songTitle
 
 headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
@@ -25,145 +18,133 @@ headers = {
 }
 
 
-def getCertainKeys(song_info):
-    # these are the keys which are useful to us
+def fix(song_info, test=0):
+    oldArtist = song_info["primary_artists"]
+    newArtist = tools.removeGibberish(oldArtist)
+    newArtist = tools.divideBySColon(newArtist)
+    newArtist = tools.removeTrailingExtras(newArtist)
+    song_info['primary_artists'] = tools.removeDup(newArtist)
 
-    rel_keys = [
-        'title',
-        'album',
-        'singers',
-        'music',
-        'url',
+    song_info["singers"] = song_info['primary_artists']
 
-        'year',
-        'label',
-        'duration',
+    old_composer = song_info["music"]
+    new_composer = tools.removeGibberish(old_composer)
+    new_composer = tools.divideBySColon(new_composer)
+    new_composer = tools.removeTrailingExtras(new_composer)
+    song_info["music"] = tools.removeDup(new_composer)
 
-        'e_songid',
-        'image_url',
-        'tiny_url',
-        'actual_album'
-    ]
+    song_info['image'] = song_info['image'].replace('-150x150.jpg', '-500x500.jpg')
 
-    json_data = json.loads(song_info)
+    # ---------------------------------------------------------------#
 
-    #########################
-    # print(song_info)
-    # x = input()
-    #########################
+    new_title = song_info['title'].replace('&quot;', '#')
+    if new_title != song_info['title']:
+        song_info['title'] = new_title
+        song_info['title'] = tools.removeGibberish(song_info['title'])
 
-    # this will store all relevant keys and their values
-    rinfo = {}
+        x = re.compile(r'''
+                                (
+                                [(\]]
+                                .*          # 'featured in' or 'from' or any other shit in quotes
+                                \#(.*)\#      # album name
+                                [)\]]
+                                )
+                                ''', re.VERBOSE)
 
-    # for k, v in json_data.items():
-    #     print(k, ':', v)
+        album_name = x.findall(song_info['title'])
+        song_info['title'] = song_info['title'].replace(album_name[0][0], '').strip()
 
-    for key in json_data:
+        song_info['album'] = album_name[0][1]
 
-        if key in rel_keys:
-            if key == 'singers':
-                rinfo['artist'] = json_data[key].strip()
-            elif key == 'music':
-                rinfo['composer'] = json_data[key].strip()
-            elif key == 'year':
-                rinfo['date'] = json_data[key].strip()
-            elif key == 'duration':
-                rinfo['length'] = json_data[key].strip()
-            elif key == 'label':
-                rinfo['organization'] = json_data[key].strip()
-            elif key == 'image_url':
-                rinfo['image_url'] = tools.fixImageUrl(json_data[key])
-            elif key == 'tiny_url':
-                rinfo['lyrics_url'] = json_data[key].replace("/song/", '/lyrics/')
-            # elif key == 'url':
-            #     rinfo['url'] = saavnAPI.decrypt_url(json_data[key])
-            # elif key == 'lyrics':
-            #     rinfo['lyrics'] = saavnAPI.get_lyrics(json_data['tiny_url'])
-            else:
-                rinfo[key] = json_data[key].strip()
+        # old method, if above wont work, this will work 9/10 times.
+        # json_data = re.sub(r'.\(\b.*?"\)', "", str(info.text))
+        # json_data = re.sub(r'.\[\b.*?"\]', "", json_data)
+        # actual_album = ''
 
-    return rinfo
+    song_info["album"] = tools.removeGibberish(song_info["album"]).strip()
+    song_info["album"] = song_info["album"] + ' (' + song_info['year'] + ')'
+
+    if test:
+        print(json.dumps(song_info, indent=2))
 
 
-def downloadSong(download_dir, log_file, song_info, test=0):
-    os.chdir(download_dir)
-    name = re.sub(r'[?*<>|/\\":]', '', song_info['title'])
+def getImpKeys(song_info, log_file, test=0):
+    keys = {}
 
-    name_with_path = os.path.join(download_dir, name + '.mp3')
+    keys["title"] = song_info["title"]
+    keys["primary_artists"] = ", ".join(
+        [artist["name"] for artist in song_info["more_info"]["artistMap"]["primary_artists"]])
+    keys["album"] = song_info["more_info"]["album"]
+    keys["singers"] = keys["primary_artists"]
+    keys["music"] = song_info["more_info"]["music"]
+    keys["starring"] = ";".join(
+        [artist["name"] for artist in song_info["more_info"]["artistMap"]["artists"] if artist['role'] == 'starring'])
+    keys['year'] = song_info['year']
+    keys["label"] = song_info["more_info"]["label"]
+    keys['image'] = song_info['image']
+    keys['encrypted_media_url'] = song_info['more_info']['encrypted_media_url']
 
-    # check if song name already exists in download folder
-    if os.path.isfile(name_with_path):
-        old_name_with_path = os.path.join(download_dir, name + '_OLD.mp3')
+    fix(keys, test=test)
 
-        try:
-            os.rename(name_with_path, old_name_with_path)
-            print('Song already exists, renaming it to "' + name + '_OLD.mp3"')
-        except FileExistsError:
-            os.remove(old_name_with_path)
-            os.rename(name_with_path, old_name_with_path)
-
-    # Download Song
-    try:
-        dec_url = saavnAPI.decrypt_url(song_info['url'])
-
-        if dec_url is None:
-            return '-1'
-
-        print("Downloading '{0}'.....".format(name))
-
-        raw_data = requests.get(dec_url, stream=True, headers=headers)
-        with open(name_with_path, "wb") as raw_song:
-            for chunk in raw_data.iter_content(chunk_size=2048):
-                # writing one chunk at a time to mp3 file
-                if chunk:
-                    raw_song.write(chunk)
-
-        print("Song download successful.")
-        return name_with_path
-
-    except:
-        print("Song download failed...")
-        tools.writeAndPrintLog(log_file, "\nSong download failed...\n", test=test)
-
-        if os.path.isfile(name_with_path):
-            os.remove(name_with_path)
-
-        return '-1'
+    return keys
 
 
-def addTags(downloaded_song_name_with_path, download_dir, log_file, song_info, test=0):
-    os.chdir(download_dir)
-    try:
-        tags = easyid3(downloaded_song_name_with_path)
-    except:
-        print("This Song has no tags. Creating tags...")
-        try:
-            tags = mutagen.File(downloaded_song_name_with_path, easy=True)
-            tags.add_tags()
-            print("Tags created.")
-        except:
-            tools.writeAndPrintLog(log_file, "\nError creating tags\n", test=test)
-            return
+def addtags(filename, json_data, log_file, test=0):
+    audio = MP4(filename)
 
-    addDateLenOrg.start(tags, song_info)
-    albumName.start(tags, song_info)
-    artistName.start(tags, song_info)
-    composerName.start(tags, song_info)
-    songTitle.start(tags, song_info)
-    albumArt.start(song_info, download_dir, downloaded_song_name_with_path)
+    audio['\xa9nam'] = html.unescape(str(json_data['title']))
+    audio['\xa9ART'] = html.unescape(str(json_data['primary_artists']))
+    audio['\xa9alb'] = html.unescape(str(json_data['album']))
+    audio['aART'] = html.unescape(str(json_data['singers']))
+    audio['\xa9wrt'] = html.unescape(str(json_data['music']))
+    audio['desc'] = html.unescape(str(json_data['starring']))
+    audio['\xa9gen'] = html.unescape(str(json_data['label']))
+    audio['\xa9day'] = html.unescape(str(json_data['year']))
+
+    cover_url = str(json_data['image'])
+    fd = urllib.request.urlopen(cover_url)
+    cover = MP4Cover(fd.read(), getattr(MP4Cover, 'FORMAT_PNG' if cover_url.endswith('png') else 'FORMAT_JPEG'))
+    fd.close()
+    audio['covr'] = [cover]
+
+    audio.save()
+
+
+def downloadSong(song_info, download_dir, log_file, test=0):
+    dec_url = saavnAPI.decrypt_url(song_info['encrypted_media_url'], test=test)
+    filename = song_info['title'] + '.m4a'
+    filename = re.sub(r'[?*<>|/\\":]', '', filename)
+
+    location = os.path.join(download_dir, filename)
+
+    print("Downloading '{0}'.....".format(filename))
+    raw_data = requests.get(dec_url, stream=True, headers=headers)
+    with open(location, "wb") as raw_song:
+        for chunk in raw_data.iter_content(chunk_size=2048):
+            if chunk:
+                raw_song.write(chunk)
+    print("Download Successful")
+
+    return location
 
 
 def start(download_dir, url, log_file, test=0):
-    list_of_songs_with_info = saavnAPI.start(url, log_file, test=test)
+    songs_json = saavnAPI.start(url, log_file, test=test)
 
-    for song in list_of_songs_with_info:
-        song_info = getCertainKeys(song)
-        if song_info is None:
-            return None
+    all_types = {
+        'artist': 'topSongs',
+        'song': 'songs',
+        'album': 'list',
+        'featured': 'list'
+    }
+    url_type = url.split('/')[3]
 
-        downloaded_song_name_with_path = downloadSong(download_dir, log_file, song_info, test=test)
-        if downloaded_song_name_with_path == '-1':
-            continue
+    for song_info in songs_json[all_types[url_type]]:
+        # for testing
+        if test:
+            with open('song.txt', 'w+') as ab:
+                json.dump(song_info, ab, indent=4)
 
-        addTags(downloaded_song_name_with_path, download_dir, log_file, song_info, test=test)
-        print()
+        keys = getImpKeys(song_info, log_file, test=test)
+        location = downloadSong(keys, download_dir, log_file, test=test)
+        addtags(location, keys, log_file, test=test)
