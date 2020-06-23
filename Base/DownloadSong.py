@@ -30,7 +30,7 @@ def addtags(filename, json_data, log_file, test=0):
     audio['\xa9gen'] = html.unescape(str(json_data['label']))
     audio['\xa9day'] = html.unescape(str(json_data['year']))
 
-    cover_url = str(json_data['image']).replace('-150x150.jpg', '-500x500.jpg')
+    cover_url = str(json_data['image'])
     fd = urllib.request.urlopen(cover_url)
     cover = MP4Cover(fd.read(), getattr(MP4Cover, 'FORMAT_PNG' if cover_url.endswith('png') else 'FORMAT_JPEG'))
     fd.close()
@@ -40,9 +40,6 @@ def addtags(filename, json_data, log_file, test=0):
 
 
 def fix(song_info):
-    song_info["album"] = tools.removeGibberish(song_info["album"]).strip()
-    song_info["album"] = song_info["album"] + ' (' + song_info['year'] + ')'
-
     oldArtist = song_info["primary_artists"]
     newArtist = tools.removeGibberish(oldArtist)
     newArtist = tools.divideBySColon(newArtist)
@@ -57,19 +54,38 @@ def fix(song_info):
     new_composer = tools.removeTrailingExtras(new_composer)
     song_info["music"] = tools.removeDup(new_composer)
 
-    song_info['title'] = tools.removeGibberish(song_info['title'])
+    song_info['image'] = song_info['image'].replace('-150x150.jpg', '-500x500.jpg')
+
+    # ---------------------------------------------------------------#
+
+    new_title = song_info['title'].replace('&quot;', '#')
+    if new_title != song_info['title']:
+        song_info['title'] = song_info['title'].replace('&quot;', '#')
+        song_info['title'] = tools.removeGibberish(song_info['title'])
+
+        x = re.compile(r'''
+                                (
+                                [(\]]
+                                .*          # 'featured in' or 'from' or any other shit in quotes
+                                \#(.*)\#      # album name
+                                [)\]]
+                                )
+                                ''', re.VERBOSE)
+
+        album_name = x.findall(song_info['title'])
+        song_info['title'] = song_info['title'].replace(album_name[0][0], '').strip()
+
+        song_info['album'] = album_name[0][1]
+
+    song_info["album"] = tools.removeGibberish(song_info["album"]).strip()
+    song_info["album"] = song_info["album"] + ' (' + song_info['year'] + ')'
 
     print(json.dumps(song_info, indent=2))
     x = input()
 
-    # albumName.start(tags, song_info)
-    # artistName.start(tags, song_info)
-    # composerName.start(tags, song_info)
-    # songTitle.start(tags, song_info)
-
 
 def getImpKeys(song_info, log_file, test=0):
-    keys = dict()
+    keys = {}
 
     # todo: not listing all artists
 
@@ -98,11 +114,13 @@ def downloadSong(song_info, log_file, download_dir, test=0):
 
     location = os.path.join(download_dir, filename)
 
+    print("Downloading '{0}'.....".format(filename))
     raw_data = requests.get(dec_url, stream=True, headers=headers)
     with open(location, "wb") as raw_song:
         for chunk in raw_data.iter_content(chunk_size=2048):
             if chunk:
                 raw_song.write(chunk)
+    print("Download Successful")
 
     return location
 

@@ -36,7 +36,8 @@ else:
 
 # start(test=test)
 
-DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/song/muskurane-romantic/QSNSeAdmYWY',
+DownloadSong.start('/home/hritwik/Videos',
+                   'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8',
                    '/home/hritwik/Videos', test=test)
 # DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/album/aashiqui-2/-iNdCmFNV9o_',
 #                    '/home/hritwik/Videos', test=test)
