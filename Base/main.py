@@ -23,6 +23,7 @@ def start(test=0):
         while True:
             print('\nWaiting for url from clipboard....')
             url = pyperclip.waitForPaste()
+            # url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
             pyperclip.copy('')
 
             if str(url).startswith('https://www.jiosaavn.com'):

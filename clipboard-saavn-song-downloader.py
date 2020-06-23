@@ -1,6 +1,6 @@
 import os
 
-from Base import main, saavnAPI, DownloadSong
+from Base import main
 
 
 def start(test=0):
@@ -34,19 +34,9 @@ if os.path.isfile('Base/test_bit.py'):
 else:
     test = 0
 
-# start(test=test)
+start(test=test)
 
-DownloadSong.start('/home/hritwik/Videos',
-                   'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8',
-                   '/home/hritwik/Videos', test=test)
-# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/album/aashiqui-2/-iNdCmFNV9o_',
-#                    '/home/hritwik/Videos', test=test)
-# DownloadSong.start('/home/hritwik/Videos',
-#                    'https://www.jiosaavn.com/featured/monday-mania---hindi/tjgzzaeg32xuOxiEGmm6lQ__',
-#                    '/home/hritwik/Videos', test=test)
-# DownloadSong.start('/home/hritwik/Videos', 'https://www.jiosaavn.com/artist/arijit-singh-/LlRWpHzy3Hk_',
-#                    '/home/hritwik/Videos', test=test)
-
+# todo: add log support
 # todo: update lyrics function in saavnApi
 # todo: find about MITM attack and see song file in monuyadav for payload
 # todo:
