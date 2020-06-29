@@ -1,6 +1,8 @@
 # Clipboard saavn song downloader
 
-This program is in early stages so it may download wrong song sometimes.
+Edit: Updated for new website and now downloads 320 Kbps m4a instead of mp3 for good quality.
+
+This program is in early stages so some bugs are expected. Open an issue on github if you find one.
 
 Just run this program and copy Jiosaavn links (like 'https://www.jiosaavn.com/album/bewafai/y3DlZsa6XD0_')
 to your clipboard and it will start downloading them. It will dowload Albums, playlists, songs and even
@@ -31,7 +33,7 @@ NOTE: If you are on Linux:
 
 Run the app using
 ```sh
-$ python3 Clipboard-saavn-song-downloader.py
+$ python3 clipboard-saavn-song-downloader.py
 ```
 
 and start copying links to download..!
