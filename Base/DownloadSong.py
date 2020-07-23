@@ -44,7 +44,7 @@ def fix(song_info, test=0):
 
         x = re.compile(r'''
                                 (
-                                [(\]]
+                                [(\[]
                                 .*          # 'featured in' or 'from' or any other shit in quotes
                                 \#(.*)\#      # album name
                                 [)\]]
