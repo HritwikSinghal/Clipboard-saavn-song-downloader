@@ -19,7 +19,7 @@ headers = {
 
 
 def fix(song_info, test=0):
-    oldArtist = song_info["primary_artists"]
+    oldArtist = song_info["primary_artists"].replace('&#039;', '')
     newArtist = tools.removeGibberish(oldArtist)
     newArtist = tools.divideBySColon(newArtist)
     newArtist = tools.removeTrailingExtras(newArtist)
@@ -84,6 +84,7 @@ def getImpKeys(song_info, log_file, test=0):
     keys["label"] = song_info["more_info"]["label"]
     keys['image'] = song_info['image']
     keys['encrypted_media_url'] = song_info['more_info']['encrypted_media_url']
+    keys["duration"] = song_info["more_info"]["duration"]
 
     fix(keys, test=test)
 
@@ -143,7 +144,7 @@ def start(download_dir, url, log_file, test=0):
     for song_info in songs_json[all_types[url_type]]:
         # for testing
         if test:
-            with open('song.txt', 'w+') as ab:
+            with open(song_info["title"] + '.txt', 'w+') as ab:
                 json.dump(song_info, ab, indent=4)
 
         keys = getImpKeys(song_info, log_file, test=test)
