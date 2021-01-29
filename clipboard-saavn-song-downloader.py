@@ -32,7 +32,7 @@ def start(test=0):
             ''')
 
 
-if os.path.isfile('Base/test_bit.py'):
+if os.path.isfile('test_bit.py'):
     test = 1
 else:
     test = 0
