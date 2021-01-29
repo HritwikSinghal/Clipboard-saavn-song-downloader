@@ -3,7 +3,7 @@ import traceback
 
 import pyperclip
 
-from Base import DownloadSong
+from Base.downloader import SongDownloader
 from Base import tools
 
 
@@ -19,6 +19,12 @@ def start(test=0):
 
     log_file = tools.createLogFile(download_dir)
 
+    # todo: add code to first check if 'songs_list.txt' file is there, if so first download all from it and then proceed
+    # todo: also rename to it to 'songs_list_done_randomNumber.txt' to avoid re downloading songs
+
+    if os.path.isfile("songs_list.txt"):
+        pass
+
     try:
         while True:
             print('\nWaiting for url from clipboard....')
@@ -28,7 +34,9 @@ def start(test=0):
 
             if str(url).startswith('https://www.jiosaavn.com'):
                 print('got url: ', url)
-                DownloadSong.start(download_dir, url, log_file, test=test)
+                
+                mydownloader = SongDownloader(download_dir, url, log_file, test=test)
+
     except:
         if test:
             traceback.print_exc()
