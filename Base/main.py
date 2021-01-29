@@ -12,7 +12,7 @@ def start(test=0):
     # download_dir = os.path.expandvars('%userprofile%/Downloads/')  # where to put it
 
     # https://stackoverflow.com/questions/4028904/how-to-get-the-home-directory-in-python
-    download_dir = os.path.expanduser("~/Downloads/Downloaded-Songs")
+    download_dir = os.path.expanduser("~/Downloads/Music")
     if not os.path.isdir(download_dir):
         os.mkdir(download_dir)
     print("Songs will be Downloaded to: ", download_dir)

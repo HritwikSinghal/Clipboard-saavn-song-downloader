@@ -92,6 +92,8 @@ def getImpKeys(song_info, log_file, test=0):
 
 
 def addtags(filename, json_data, log_file, test=0):
+    print('Adding Tags.....')
+
     audio = MP4(filename)
 
     audio['\xa9nam'] = html.unescape(str(json_data['title']))
@@ -110,6 +112,8 @@ def addtags(filename, json_data, log_file, test=0):
     audio['covr'] = [cover]
 
     audio.save()
+
+    print("Tags Added Successfully")
 
 
 def downloadSong(song_info, download_dir, log_file, test=0):
@@ -143,10 +147,13 @@ def start(download_dir, url, log_file, test=0):
 
     for song_info in songs_json[all_types[url_type]]:
         # for testing
-        if test:
-            with open(song_info["title"] + '.txt', 'w+') as ab:
-                json.dump(song_info, ab, indent=4)
+        try:
+            if test:
+                with open(song_info["title"] + '.txt', 'w+') as ab:
+                    json.dump(song_info, ab, indent=4)
+        except:
+            print("Cannot create Song Details File for debug, check Song title")
 
         keys = getImpKeys(song_info, log_file, test=test)
-        location = downloadSong(keys, download_dir, log_file, test=test)
-        addtags(location, keys, log_file, test=test)
+        download_location = downloadSong(keys, download_dir, log_file, test=test)
+        addtags(download_location, keys, log_file, test=test)

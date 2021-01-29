@@ -31,9 +31,15 @@ NOTE: If you are on Linux:
         pip install PyQt4 				# to install the PyQt4 Python module.
 
 
-Run the app using
+Running the app
 ```sh
+Linux & macOS:
 $ python3 clipboard-saavn-song-downloader.py
+```
+
+```sh
+Windows:
+- Simply click on "Start_Widows" bat file.
 ```
 
 and start copying links to download..!

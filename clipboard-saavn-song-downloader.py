@@ -1,3 +1,6 @@
+# for bat file "https://datatofish.com/batch-python-script/"
+
+
 import os
 
 from Base import main
@@ -36,7 +39,8 @@ else:
 
 start(test=test)
 
-# todo: add log support
+# todo: add log support (use logger)
+# todo: use OOP
 # todo: update lyrics function in saavnApi
 # todo: find about MITM attack and see song file in monuyadav for payload
 # todo:
