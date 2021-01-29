@@ -5,6 +5,7 @@ import re
 import urllib
 import urllib.request
 
+import pyperclip
 import requests
 from mutagen.mp4 import *
 
@@ -14,7 +15,7 @@ from Base import tools
 
 class SongDownloader:
 
-    def __init__(self, download_dir, url, log_file, test=0):
+    def __init__(self, download_dir, log_file, test=0):
 
         self.headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
@@ -28,20 +29,20 @@ class SongDownloader:
             'album': 'list',
             'featured': 'list'
         }
-        self.url_type = url.split('/')[3]
+        self.url = ''
+        self.url_type = ''
 
         self.download_dir = download_dir
-        self.url = url
         self.log_file = log_file
         self.test = test
 
         self.keys = {}
         self.download_location = ''
 
-    def get_url(self):
-        pass
-
     def run(self):
+
+        self.get_url()
+
         songs_json = saavnAPI.start(self.url, self.log_file, test=self.test)
 
         for song_info in songs_json[self.all_types[self.url_type]]:
@@ -59,6 +60,19 @@ class SongDownloader:
             self.getImpKeys()
             self.downloadSong()
             self.addtags()
+
+    def get_url(self):
+        print('\nWaiting for url from clipboard....')
+
+        url = pyperclip.waitForPaste()
+        # url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
+        pyperclip.copy('')
+
+        if str(url).startswith('https://www.jiosaavn.com'):
+            print('got url: ', url)
+
+            self.url = url
+            self.url_type = self.url.split('/')[3]
 
     def getImpKeys(self):
 

@@ -2,13 +2,49 @@
 
 
 import os
+import traceback
 
-from Base import main
+import pyperclip
+
+from Base.downloader import SongDownloader
+from Base import tools
 
 
 def start(test=0):
+    # https://stackoverflow.com/questions/23255186/download-under-users-profile-directory
+    # download_dir = os.path.expandvars('%userprofile%/Downloads/')  # where to put it
+
+    # https://stackoverflow.com/questions/4028904/how-to-get-the-home-directory-in-python
+    download_dir = os.path.expanduser("~/Downloads/Music")
+    if not os.path.isdir(download_dir):
+        os.mkdir(download_dir)
+    print("Songs will be Downloaded to: ", download_dir)
+
+    log_file = tools.createLogFile(download_dir)
+
+    # todo: add code to first check if 'songs_list.txt' file is there, if so first download all from it and then proceed
+    # todo: also rename to it to 'songs_list_done_randomNumber.txt' to avoid re downloading songs
+
+    if os.path.isfile("songs_list.txt"):
+        pass
+
+    try:
+        while True:
+            my_downloader = SongDownloader(download_dir, log_file, test=test)
+            my_downloader.run()
+
+    except:
+        if test:
+            traceback.print_exc()
+        print("Exiting....")
+        exit(0)
+
+
+if __name__ == '__main__':
+    test = 1 if os.path.isfile('test_bit.py') else 0
+
     if test:
-        main.start(test=1)
+        start(test)
     else:
         print("""
             This program will Download songs from Jiosaavn based on the links you copy on your clipboard. 
@@ -17,7 +53,7 @@ def start(test=0):
         """)
 
         print("Starting Program....")
-        main.start(test)
+        start(test)
 
         print("""
                 If there were errors during running this program, please upload log file
@@ -30,11 +66,6 @@ def start(test=0):
                 By Hritwik
                 https://github.com/HritwikSinghal
             ''')
-
-
-if __name__ == '__main__':
-    test = 1 if os.path.isfile('test_bit.py') else 0
-    start(test=test)
 
 # todo: add log support (use logger)
 # todo: use OOP
