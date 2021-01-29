@@ -32,12 +32,9 @@ def start(test=0):
             ''')
 
 
-if os.path.isfile('test_bit.py'):
-    test = 1
-else:
-    test = 0
-
-start(test=test)
+if __name__ == '__main__':
+    test = 1 if os.path.isfile('test_bit.py') else 0
+    start(test=test)
 
 # todo: add log support (use logger)
 # todo: use OOP

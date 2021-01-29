@@ -35,7 +35,8 @@ def start(test=0):
             if str(url).startswith('https://www.jiosaavn.com'):
                 print('got url: ', url)
                 
-                mydownloader = SongDownloader(download_dir, url, log_file, test=test)
+                my_downloader = SongDownloader(download_dir, url, log_file, test=test)
+                my_downloader.run()
 
     except:
         if test:
