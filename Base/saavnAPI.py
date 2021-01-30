@@ -1,6 +1,5 @@
 import base64
 import json
-import re
 import traceback
 
 import requests

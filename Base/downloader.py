@@ -40,8 +40,10 @@ class SongDownloader:
         self.download_location = ''
 
     def run(self):
-
-        self.get_url()
+        if not self.url:
+            self.get_url()
+        else:
+            self.url_type = self.url.split('/')[3]
 
         songs_json = saavnAPI.start(self.url, self.log_file, test=self.test)
 
@@ -51,6 +53,8 @@ class SongDownloader:
             # for testing ####
             try:
                 if self.test:
+                    os.chdir(self.download_dir)  # So that below text files are saved in download dir.
+
                     with open(song_info["title"] + '.txt', 'w+') as ab:
                         json.dump(song_info, ab, indent=4)
             except:

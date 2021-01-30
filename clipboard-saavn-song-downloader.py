@@ -2,12 +2,10 @@
 
 
 import os
+import random
 import traceback
 
-import pyperclip
-
 from Base.downloader import SongDownloader
-from Base import tools
 
 
 def start(test=0):
@@ -15,18 +13,36 @@ def start(test=0):
     # download_dir = os.path.expandvars('%userprofile%/Downloads/')  # where to put it
 
     # https://stackoverflow.com/questions/4028904/how-to-get-the-home-directory-in-python
+
     download_dir = os.path.expanduser("~/Downloads/Music")
+
     if not os.path.isdir(download_dir):
         os.mkdir(download_dir)
     print("Songs will be Downloaded to: ", download_dir)
 
-    log_file = tools.createLogFile(download_dir)
-
-    # todo: add code to first check if 'songs_list.txt' file is there, if so first download all from it and then proceed
     # todo: also rename to it to 'songs_list_done_randomNumber.txt' to avoid re downloading songs
 
+    # todo: fix below
+    log_file = ''
+
     if os.path.isfile("songs_list.txt"):
-        pass
+        print('Found "songs_list.txt", downloading songs from it first... ')
+        with open('songs_list.txt', 'r+') as song_file:
+
+            song_url_list = [str(x).strip() for x in song_file.readlines()]
+            my_downloader = SongDownloader(download_dir, log_file, test=test)
+
+            for song_url in song_url_list:
+                try:
+                    my_downloader.url = song_url
+                    my_downloader.run()
+                except:
+                    if test:
+                        traceback.print_exc()
+                    continue
+
+            print('Song download from file complete, renaming file and moving to clipboard download...')
+        os.rename('songs_list.txt', 'songs_list_DONE_' + str(random.randint(1, 100000)) + '.txt')
 
     try:
         while True:
