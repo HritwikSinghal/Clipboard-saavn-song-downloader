@@ -13,6 +13,20 @@ It will also rename the ```songs_list.txt``` file to ```songs_list_done_randomNu
 to avoid re-downloading songs.
 The file ```songs_list.txt``` should be in the same folder as ```clipboard-saavn-song-downloader.py```.
 
+## Screenshots
+
+### Songs
+
+![songs](media/songs.gif)
+
+### Albums
+![albums](media/albums.gif)
+
+### Playlists
+![playlists](media/playlists.gif)
+
+And more! 
+
 ## Installation:
 
 ### Clone this repository using

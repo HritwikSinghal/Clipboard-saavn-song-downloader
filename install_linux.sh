@@ -30,6 +30,8 @@ sudo chmod +x ./Start_linux.sh
 
 printf "\n ${red} ------------------------------------------------- ${end} "
 sudo ln -sf ${SCRIPTPATH}/Start_linux.sh /usr/local/bin/saavn-downloader
+# We also need to create a soft link to "clipboard-saavn-song-downloader.py" in user's home dir since 
+# the "Start_linux" will run in home dir by install script and "python3" in it will search for file in home dir.
 sudo ln -sf ${SCRIPTPATH}/clipboard-saavn-song-downloader.py ~/clipboard-saavn-song-downloader.py
 
 printf "\n All done. Just Type ${grn}saavn-downloader${end} from terminal to launch the program."
