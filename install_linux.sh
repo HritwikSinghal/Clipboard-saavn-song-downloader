@@ -6,6 +6,10 @@ mag=$'\e[1;35m'
 cyn=$'\e[1;36m'
 end=$'\e[0m'
 
+# from https://stackoverflow.com/questions/4774054/reliable-way-for-a-bash-script-to-get-the-full-path-to-itself
+SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+SCRIPT_PATH=$(dirname $(realpath -s $0))
+
 printf "\n\n ${red} Installing Requirements ${end} "
 pip3 install -r requirements.txt
 
@@ -25,6 +29,7 @@ pip3 install PyQt4
 sudo chmod +x ./Start_linux.sh
 
 printf "\n ${red} ------------------------------------------------- ${end} "
-sudo ln -sf ./Start_linux.sh /usr/local/bin/saavn-downloader
+sudo ln -sf ${SCRIPTPATH}/Start_linux.sh /usr/local/bin/saavn-downloader
+sudo ln -sf ${SCRIPTPATH}/clipboard-saavn-song-downloader.py ~/clipboard-saavn-song-downloader.py
 
 printf "\n All done. Just Type ${grn}saavn-downloader${end} from terminal to launch the program."

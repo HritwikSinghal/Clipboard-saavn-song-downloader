@@ -5,7 +5,7 @@ import os
 import random
 import traceback
 
-from Base.downloader import SongDownloader
+from src.downloader import SongDownloader
 
 
 def start(test=0):
@@ -55,7 +55,7 @@ def start(test=0):
 
 
 if __name__ == '__main__':
-    test = 1 if os.path.isfile('test_bit.py') else 0
+    test = 1 if os.path.isfile('test_bit') else 0
 
     if test:
         start(test)

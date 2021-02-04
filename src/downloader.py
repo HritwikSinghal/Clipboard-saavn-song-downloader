@@ -9,8 +9,8 @@ import pyperclip
 import requests
 from mutagen.mp4 import *
 
-from Base import saavnAPI
-from Base import tools
+from src import saavnAPI
+from src import tools
 
 
 class SongDownloader:
