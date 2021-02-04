@@ -20,8 +20,6 @@ def start(test=0):
         os.mkdir(download_dir)
     print("Songs will be Downloaded to: ", download_dir)
 
-    # todo: also rename to it to 'songs_list_done_randomNumber.txt' to avoid re downloading songs
-
     # todo: fix below
     log_file = ''
 
@@ -83,8 +81,10 @@ if __name__ == '__main__':
                 https://github.com/HritwikSinghal
             ''')
 
-# todo: add log support (use logger)
+# todo:  make it run concurrent
+# todo: use logger
 # todo: use OOP
 # todo: update lyrics function in saavnApi
 # todo: find about MITM attack and see song file in monuyadav for payload
+# todo:
 # todo:

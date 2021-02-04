@@ -40,7 +40,7 @@ class SongDownloader:
         self.download_location = ''
 
     def run(self):
-        if not self.url:
+        while not self.url:
             self.get_url()
         else:
             self.url_type = self.url.split('/')[3]
