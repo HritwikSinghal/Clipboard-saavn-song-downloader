@@ -10,7 +10,9 @@ end=$'\e[0m'
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 SCRIPT_PATH=$(dirname $(realpath -s $0))
 
+
 printf "\n\n ${grn} Cloning Repo ${end} "
+rm -rf ~/Clipboard-saavn-song-downloader/
 git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader
 cd ~/Clipboard-saavn-song-downloader/
 rm -rf .git/
@@ -27,9 +29,6 @@ sudo pacman -S xsel --noconfirm
 
 sudo apt install xclip -y
 sudo pacman -S xclip --noconfirm
-
-pip3 install gtk
-pip3 install PyQt4
 
 sudo chmod +x ./Start_linux.sh
 

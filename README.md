@@ -29,29 +29,31 @@ And more!
 
 ## Installation:
 
-### Clone this repository using
-```sh
-$ git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
-```
-
-### Enter the directory
-
-```sh
-$ cd Clipboard-saavn-song-downloader/
-```
-
-##### Now there are two methods of Installation, ```Method 1``` and ```Method 2``` . **Windows users should follow only ```Method 2```**. While Linux Users can follow either ```Method 1``` or ```Method 2``` 
+#####  NOTE: There are two methods of Installation, ```Method 1``` and ```Method 2``` . **Windows users should follow only ```Method 2```**. While Linux Users can follow either ```Method 1``` or ```Method 2``` 
 
 
 ### Method 1 (Easy Install, ONLY FOR LINUX)
 
-1. Run ```chmod +x ./install_linux.sh``` to make shell script executable.
+Those who want to get started quickly and conveniently may install using the following command (Make sure curl is installed on your system.)
 
-2. Now type ```saavn-downloader``` from terminal to run the program. (You can run this from any directory!)
+```curl https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
+
+Now run ```saavn-downloader``` from terminal to lauch the program. (You can run this from any directory!)
 
 
 ### Method 2 (For Both Linux and Windows.)
 
+
+#### Clone this repository using
+```sh
+$ git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
+```
+
+#### Enter the directory
+
+```sh
+$ cd Clipboard-saavn-song-downloader/
+```
 
 #### Install all the requirements.
 
@@ -62,26 +64,17 @@ $ pip3 install -r requirements.txt
 1. Upgrade requests using ```sudo pip3 install --upgrade requests```
 
 2. install one of the copy/paste mechanisms:
-
-    1. xsel utility.
-	```
-	sudo apt install xsel			# For debian based Distros
-	sudo pacman -S xsel --noconfirm			# For Arch based Distros
-	```
-
-	2. xclip utility
+	
+	1. xclip utility
 	```
 	sudo apt install xclip			# For Debian based Distros
 	sudo pacman -S xclip --noconfirm			# For Arch based Distros
  	```
- 	3. gtk Python module
+
+    2. xsel utility.
 	```
-	pip3 install gtk
-	```
- 
-    4. PyQt4 Python module
-	```
-	pip3 install PyQt4
+	sudo apt install xsel			# For debian based Distros
+	sudo pacman -S xsel --noconfirm			# For Arch based Distros
 	```
 
 ### Running the app
@@ -90,6 +83,7 @@ $ pip3 install -r requirements.txt
 ```sh
 $ python3 clipboard-saavn-song-downloader.py
 ```
+
 or you can create a symbolic link to the script ```Start_linux.sh``` in your ```/usr/local/bin``` and type ```saavn-downloader``` from terminal to run the program. (You can run this from any directory!)
 
 #### Windows Users:
@@ -97,6 +91,6 @@ or you can create a symbolic link to the script ```Start_linux.sh``` in your ```
 Simply click on "Start_Widows" bat file.
 ```
 
-**And start copying links to download.!***
+**And start copying links to download!.***
 
 **Note: This program is in early stages, so some bugs are expected. Open an issue on github if you find one.**
