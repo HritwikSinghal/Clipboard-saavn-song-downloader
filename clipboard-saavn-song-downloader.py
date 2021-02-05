@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 https://github.com/HritwikSinghal
             ''')
 
-# todo:  make it run concurrent
+# todo: make it run concurrent
 # todo: use logger
 # todo: use OOP
 # todo: update lyrics function in saavnApi

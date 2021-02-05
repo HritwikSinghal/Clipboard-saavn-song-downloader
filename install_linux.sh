@@ -10,13 +10,18 @@ end=$'\e[0m'
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 SCRIPT_PATH=$(dirname $(realpath -s $0))
 
-printf "\n\n ${red} Installing Requirements ${end} "
+printf "\n\n ${grn} Cloning Repo ${end} "
+git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader
+cd ~/Clipboard-saavn-song-downloader/
+rm -rf .git/
+
+printf "\n\n ${grn} Installing Requirements ${end} "
 pip3 install -r requirements.txt
 
-printf "\n\n ${red} Upgrading requests ${end} "
+printf "\n\n ${grn} Upgrading requests ${end} "
 sudo pip3 install --upgrade requests
 
-printf "\n\n ${red} Insatlling Xsel & Xclip ${end} "
+printf "\n\n ${grn} Insatlling Xsel & Xclip ${end} "
 sudo apt install xsel -y
 sudo pacman -S xsel --noconfirm
 
@@ -28,7 +33,7 @@ pip3 install PyQt4
 
 sudo chmod +x ./Start_linux.sh
 
-printf "\n ${red} ------------------------------------------------- ${end} "
+printf "\n ${grn} ------------------------------------------------- ${end} "
 sudo ln -sf ${SCRIPTPATH}/Start_linux.sh /usr/local/bin/saavn-downloader
 # We also need to create a soft link to "clipboard-saavn-song-downloader.py" in user's home dir since 
 # the "Start_linux" will run in home dir by install script and "python3" in it will search for file in home dir.

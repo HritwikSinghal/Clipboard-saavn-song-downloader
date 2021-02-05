@@ -31,7 +31,7 @@ And more!
 
 ### Clone this repository using
 ```sh
-$ git clone https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
+$ git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
 ```
 
 ### Enter the directory
