@@ -36,7 +36,7 @@ And more!
 
 Those who want to get started quickly and conveniently may install using the following command (Make sure curl is installed on your system.)
 
-```curl https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
+```curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
 
 Now run ```saavn-downloader``` from terminal to lauch the program. (You can run this from any directory!)
 
