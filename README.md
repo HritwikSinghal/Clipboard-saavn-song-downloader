@@ -34,9 +34,9 @@ And more!
 
 ### Method 1 (Easy Install, ONLY FOR LINUX)
 
-Those who want to get started quickly and conveniently may install using the following command (Make sure curl is installed on your system.)
+Those who want to get started quickly and conveniently may install using the following command (**Make sure curl is installed on your system.**)
 
-```curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
+```$ curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
 
 Now run ```saavn-downloader``` from terminal to lauch the program. (You can run this from any directory!)
 
@@ -94,3 +94,7 @@ Simply click on "Start_Widows" bat file.
 **And start copying links to download!.***
 
 **Note: This program is in early stages, so some bugs are expected. Open an issue on github if you find one.**
+
+## License
+
+[GPLv3](/LICENSE)

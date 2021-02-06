@@ -47,11 +47,8 @@ printf "\n\n ${grn} Upgrading requests ${end} "
 sudo pip3 install --upgrade requests
 
 printf "\n\n ${grn} Insatlling Xsel & Xclip ${end} "
-sudo apt install xsel -y
-sudo pacman -S xsel --noconfirm
-
-sudo apt install xclip -y
-sudo pacman -S xclip --noconfirm
+sudo apt install xsel xclip -y
+sudo pacman -S xsel xclip --noconfirm
 
 sudo chmod +x ./Start_linux.sh
 
