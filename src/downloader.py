@@ -2,6 +2,7 @@ import html
 import json
 import os
 import re
+import traceback
 import urllib
 import urllib.request
 
@@ -39,6 +40,10 @@ class SongDownloader:
         self.keys = {}
         self.download_location = ''
 
+        self.fix_done = False
+        self.song_downloaded = False
+        self.tags_added = False
+
     def run(self):
         while not self.url:
             self.get_url()
@@ -47,23 +52,31 @@ class SongDownloader:
 
         songs_json = saavnAPI.start(self.url, self.log_file, test=self.test)
 
-        for song_info in songs_json[self.all_types[self.url_type]]:
-            self.keys = song_info
+        # todo: add check if 'songs_json' is empty or not
+        try:
+            for song_info in songs_json[self.all_types[self.url_type]]:
+                self.keys = song_info
 
-            # for testing ####
-            try:
-                if self.test:
-                    os.chdir(self.download_dir)  # So that below text files are saved in download dir.
+                # for testing ####
+                try:
+                    if self.test:
+                        os.chdir(self.download_dir)  # So that below text files are saved in download dir.
 
-                    with open(song_info["title"] + '.txt', 'w+') as ab:
-                        json.dump(song_info, ab, indent=4)
-            except:
-                print("Cannot create Song Details File for debug, check Song title")
-            ###################
+                        with open(song_info["title"] + '.txt', 'w+') as ab:
+                            json.dump(song_info, ab, indent=4)
+                except:
+                    print("Cannot create Song Details File for debug, check Song title")
+                ###################
 
-            self.getImpKeys()
-            self.downloadSong()
-            self.addtags()
+                self.get_imp_keys()
+                if self.fix_done:
+                    self.download_song()
+                if self.song_downloaded:
+                    self.add_tags()
+        except:
+            if self.test:
+                traceback.print_exc()
+                self.url = ''
 
     def get_url(self):
         print('\nWaiting for url from clipboard....')
@@ -78,7 +91,7 @@ class SongDownloader:
             self.url = url
             self.url_type = self.url.split('/')[3]
 
-    def getImpKeys(self):
+    def get_imp_keys(self):
 
         self.keys["title"] = self.keys["title"]
         self.keys["primary_artists"] = ", ".join(
@@ -144,10 +157,12 @@ class SongDownloader:
         self.keys["album"] = tools.removeGibberish(self.keys["album"]).strip()
         self.keys["album"] = self.keys["album"] + ' (' + self.keys['year'] + ')'
 
+        self.fix_done = True
+
         if self.test:
             print(json.dumps(self.keys, indent=2))
 
-    def downloadSong(self):
+    def download_song(self):
         dec_url = saavnAPI.decrypt_url(self.keys['encrypted_media_url'], test=self.test)
         filename = self.keys['title'] + '.m4a'
         filename = re.sub(r'[?*<>|/\\":]', '', filename)
@@ -160,11 +175,14 @@ class SongDownloader:
             for chunk in raw_data.iter_content(chunk_size=2048):
                 if chunk:
                     raw_song.write(chunk)
-        print("Download Successful")
+
+        self.song_downloaded = True
+        if self.song_downloaded:
+            print("Download Successful")
 
         self.download_location = location
 
-    def addtags(self):
+    def add_tags(self):
         print('Adding Tags.....')
 
         audio = MP4(self.download_location)
@@ -186,4 +204,5 @@ class SongDownloader:
 
         audio.save()
 
-        print("Tags Added Successfully\n")
+        if self.tags_added:
+            print("Tags Added Successfully\n")

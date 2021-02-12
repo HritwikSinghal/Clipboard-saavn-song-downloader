@@ -30,14 +30,14 @@ echo -e "
 "
 
 echo -e "
-－ Ｂｙ Ｈｒｉｔｗｉｋ Ｓｉｎｇｈａｌ
+			－ Ｂｙ Ｈｒｉｔｗｉｋ Ｓｉｎｇｈａｌ
 "
 
 
 printf "\n\n ${grn} Cloning Repo ${end} "
 rm -rf ~/Clipboard-saavn-song-downloader/
 git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader
-cd ~/Clipboard-saavn-song-downloader/
+cd ~/Clipboard-saavn-song-downloader/ || exit
 rm -rf .git/
 
 printf "\n\n ${grn} Installing Requirements ${end} "
@@ -50,7 +50,7 @@ printf "\n\n ${grn} Insatlling Xsel & Xclip ${end} "
 sudo apt install xsel xclip -y
 sudo pacman -S xsel xclip --noconfirm
 
-sudo chmod +x ./Start_linux.sh
+sudo chmod +x ./Start_linux.sh || exit
 
 printf "\n ${grn} ------------------------------------------------- ${end} "
 sudo ln -sf ${SCRIPTPATH}/Start_linux.sh /usr/local/bin/saavn-downloader
