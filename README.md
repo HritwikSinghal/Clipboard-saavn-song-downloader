@@ -1,45 +1,100 @@
 # Clipboard saavn song downloader
 
-Edit: Updated for new website and now downloads 320 Kbps m4a instead of mp3 for good quality.
+Download songs from Jiosaavn by simply copying the Url of Albums, playlists, songs or even
+home page or any other page! to your clipboard.
 
-This program is in early stages so some bugs are expected. Open an issue on github if you find one.
+Just run this program and copy Jiosaavn links (like ```https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8```)
+to your clipboard, and it will start downloading them.
+It will download 320 Kbps m4a of song and save it in ```$HOME/downloads/Music``` Directory.
 
-Just run this program and copy Jiosaavn links (like 'https://www.jiosaavn.com/album/bewafai/y3DlZsa6XD0_')
-to your clipboard and it will start downloading them. It will dowload Albums, playlists, songs and even
-home page or any other page songs!
+You can also create a file named ```songs_list.txt``` which contains list of urls separated by newline, 
+this program will download all the links from there first and then move to parsing URLs from clipboard.
+It will also rename the ```songs_list.txt``` file to ```songs_list_done_randomNumber.txt``` 
+to avoid re-downloading songs.
+The file ```songs_list.txt``` should be in the same folder as ```clipboard-saavn-song-downloader.py```.
+
+## Screenshots
+
+### Songs
+
+![songs](media/songs.gif)
+
+### Albums
+![albums](media/albums.gif)
+
+### Playlists
+![playlists](media/playlists.gif)
+
+And more! 
+
+## Installation:
+
+#####  NOTE: There are two methods of Installation, ```Method 1``` and ```Method 2``` . **Windows users should follow only ```Method 2```**. While Linux Users can follow either ```Method 1``` or ```Method 2``` 
 
 
-Installation:
+### Method 1 (Easy Install, ONLY FOR LINUX)
 
-Clone this repository using
+Those who want to get started quickly and conveniently may install using the following command (**Make sure curl is installed on your system.**)
+
+```$ curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
+
+Now run ```saavn-downloader``` from terminal to lauch the program. (You can run this from any directory!)
+
+
+### Method 2 (For Both Linux and Windows.)
+
+
+#### Clone this repository using
 ```sh
-$ git clone https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
+$ git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
 ```
-Enter the directory and install all the requirements using
+
+#### Enter the directory
+
+```sh
+$ cd Clipboard-saavn-song-downloader/
+```
+
+#### Install all the requirements.
+
 ```sh
 $ pip3 install -r requirements.txt
-```
-NOTE: If you are on Linux: 
+``` 
 
-1. upgrade requests using ```sudo pip3 install --upgrade requests```
+1. Upgrade requests using ```sudo pip3 install --upgrade requests```
 
 2. install one of the copy/paste mechanisms:
+	
+	1. xclip utility
+	```
+	sudo apt install xclip			# For Debian based Distros
+	sudo pacman -S xclip --noconfirm			# For Arch based Distros
+ 	```
 
-        sudo apt-get install xsel 			# to install the xsel utility.
-        sudo apt-get install xclip 			# to install the xclip utility.
-        pip install gtk 				# to install the gtk Python module.
-        pip install PyQt4 				# to install the PyQt4 Python module.
+    2. xsel utility.
+	```
+	sudo apt install xsel			# For debian based Distros
+	sudo pacman -S xsel --noconfirm			# For Arch based Distros
+	```
 
+### Running the app
 
-Running the app
+#### Linux Users: (If you followed Method 1, then you don't need this section. The steps to run are given there only)
 ```sh
-Linux & macOS:
 $ python3 clipboard-saavn-song-downloader.py
 ```
 
-```sh
-Windows:
-- Simply click on "Start_Widows" bat file.
+or you can create a symbolic link to the script ```Start_linux.sh``` in your ```/usr/local/bin``` and type ```saavn-downloader``` from terminal to run the program. (You can run this from any directory!)
+
+#### Windows Users:
+```
+Simply click on "Start_Widows" bat file.
 ```
 
-and start copying links to download..!
+**And start copying links to download!.***
+
+**Note: This program is in early stages, so some bugs are expected. Open an issue on github if you find one.**
+
+## License
+
+[GPLv3](/LICENSE)

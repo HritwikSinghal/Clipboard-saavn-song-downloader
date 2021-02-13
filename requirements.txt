@@ -4,3 +4,4 @@ mutagen
 html5lib
 pyperclip
 pyDes
+pytest

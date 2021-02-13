@@ -2,22 +2,90 @@
 
 
 import os
+import random
+import traceback
 
-from Base import main
+from src.downloader import SongDownloader
 
 
 def start(test=0):
+    # https://stackoverflow.com/questions/23255186/download-under-users-profile-directory
+    # download_dir = os.path.expandvars('%userprofile%/Downloads/')  # where to put it
+
+    # https://stackoverflow.com/questions/4028904/how-to-get-the-home-directory-in-python
+
+    download_dir = os.path.expanduser("~/Downloads/Music")
+
+    if not os.path.isdir(download_dir):
+        os.mkdir(download_dir)
+    print("Songs will be Downloaded to: ", download_dir)
+
+    # todo: fix below log file
+    log_file = ''
+
+    if os.path.isfile("songs_list.txt"):
+        print('Found "songs_list.txt", downloading songs from it first... ')
+        with open('songs_list.txt', 'r+') as song_file:
+
+            song_url_list = [str(x).strip() for x in song_file.readlines()]
+            my_downloader = SongDownloader(download_dir, log_file, test=test)
+
+            for song_url in song_url_list:
+                try:
+                    my_downloader.url = song_url
+                    my_downloader.run()
+                except:
+                    if test:
+                        traceback.print_exc()
+                    continue
+
+            print('Song download from file complete, renaming file and moving to clipboard download...')
+        os.rename('songs_list.txt', 'songs_list_DONE_' + str(random.randint(1, 100000)) + '.txt')
+
+    try:
+        while True:
+            my_downloader = SongDownloader(download_dir, log_file, test=test)
+            my_downloader.run()
+
+    except:
+        if test:
+            traceback.print_exc()
+        print("Exiting....")
+
+
+if __name__ == '__main__':
+    test = 1 if os.path.isfile('test_bit') else 0
+
     if test:
-        main.start(test=1)
+        start(test)
     else:
+        print("""\n
+            
+                ░██████╗░█████╗░░█████╗░██╗░░░██╗███╗░░██╗  ░██████╗░█████╗░███╗░░██╗░██████╗░
+                ██╔════╝██╔══██╗██╔══██╗██║░░░██║████╗░██║  ██╔════╝██╔══██╗████╗░██║██╔════╝░
+                ╚█████╗░███████║███████║╚██╗░██╔╝██╔██╗██║  ╚█████╗░██║░░██║██╔██╗██║██║░░██╗░
+                ░╚═══██╗██╔══██║██╔══██║░╚████╔╝░██║╚████║  ░╚═══██╗██║░░██║██║╚████║██║░░╚██╗
+                ██████╔╝██║░░██║██║░░██║░░╚██╔╝░░██║░╚███║  ██████╔╝╚█████╔╝██║░╚███║╚██████╔╝
+                ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚══╝  ╚═════╝░░╚════╝░╚═╝░░╚══╝░╚═════╝░
+        
+                ██████╗░░█████╗░░██╗░░░░░░░██╗███╗░░██╗██╗░░░░░░█████╗░░█████╗░██████╗░███████╗██████╗░
+                ██╔══██╗██╔══██╗░██║░░██╗░░██║████╗░██║██║░░░░░██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗
+                ██║░░██║██║░░██║░╚██╗████╗██╔╝██╔██╗██║██║░░░░░██║░░██║███████║██║░░██║█████╗░░██████╔╝
+                ██║░░██║██║░░██║░░████╔═████║░██║╚████║██║░░░░░██║░░██║██╔══██║██║░░██║██╔══╝░░██╔══██╗
+                ██████╔╝╚█████╔╝░░╚██╔╝░╚██╔╝░██║░╚███║███████╗╚█████╔╝██║░░██║██████╔╝███████╗██║░░██║
+                ╚═════╝░░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░░╚══╝╚══════╝░╚════╝░╚═╝░░╚═╝╚═════╝░╚══════╝╚═╝░░╚═╝
+                
+                － Ｂｙ Ｈｒｉｔｗｉｋ Ｓｉｎｇｈａｌ
+        \n""")
+
         print("""
-            This program will Download songs from Jiosaavn based on the links you copy on your clipboard. 
-            Just run this program and copy links, it will download them in background.
-            For more info, visit https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
+                This program will Download songs from Jiosaavn based on the links you copy on your clipboard. 
+                Just run this program and copy links, it will download them in background.
+                For more info, visit https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
         """)
 
         print("Starting Program....")
-        main.start(test)
+        start(test)
 
         print("""
                 If there were errors during running this program, please upload log file
@@ -31,16 +99,22 @@ def start(test=0):
                 https://github.com/HritwikSinghal
             ''')
 
+        print("""
+        
+                ████████╗██╗░░██╗░█████╗░███╗░░██╗██╗░░██╗  ██╗░░░██╗░█████╗░██╗░░░██╗██╗
+                ╚══██╔══╝██║░░██║██╔══██╗████╗░██║██║░██╔╝  ╚██╗░██╔╝██╔══██╗██║░░░██║██║
+                ░░░██║░░░███████║███████║██╔██╗██║█████═╝░  ░╚████╔╝░██║░░██║██║░░░██║██║
+                ░░░██║░░░██╔══██║██╔══██║██║╚████║██╔═██╗░  ░░╚██╔╝░░██║░░██║██║░░░██║╚═╝
+                ░░░██║░░░██║░░██║██║░░██║██║░╚███║██║░╚██╗  ░░░██║░░░╚█████╔╝╚██████╔╝██╗
+                ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝  ░░░╚═╝░░░░╚════╝░░╚═════╝░╚═╝
+        """)
 
-if os.path.isfile('test_bit.py'):
-    test = 1
-else:
-    test = 0
-
-start(test=test)
-
-# todo: add log support (use logger)
-# todo: use OOP
+# todo: add colored text : https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
+# todo: fix artists and add support for Podcasts (shows)
+# todo: make it run concurrent
+# todo: write tests
+# todo: use logger
 # todo: update lyrics function in saavnApi
 # todo: find about MITM attack and see song file in monuyadav for payload
+# todo:
 # todo:
