@@ -50,7 +50,7 @@ def start(test=0):
     except:
         if test:
             traceback.print_exc()
-        print("Exiting....")
+        print("\nExiting....")
 
 
 if __name__ == '__main__':

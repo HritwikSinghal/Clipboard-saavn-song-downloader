@@ -206,6 +206,4 @@ class SongDownloader:
         audio['covr'] = [cover]
 
         audio.save()
-
-        if self.tags_added:
-            print("Tags Added Successfully\n")
+        print("Tags Added Successfully\n")
