@@ -36,12 +36,12 @@ echo -e "
 
 printf "\n\n ${grn} Cloning Repo ${end} "
 rm -rf ~/Clipboard-saavn-song-downloader/
-git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader
+git clone --depth 1 -b install_linux_fix https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader/
 cd ~/Clipboard-saavn-song-downloader/ || exit
 rm -rf .git/
 
 printf "\n\n ${grn} Installing Requirements ${end} "
-pip3 install -r requirements.txt
+pip3 install -r ./requirements.txt
 
 printf "\n\n ${grn} Upgrading requests ${end} "
 sudo pip3 install --upgrade requests
@@ -53,10 +53,10 @@ sudo pacman -S xsel xclip --noconfirm
 sudo chmod +x ./Start_linux.sh || exit
 
 printf "\n ${grn} ------------------------------------------------- ${end} "
-sudo ln -sf ${SCRIPTPATH}/Start_linux.sh /usr/local/bin/saavn-downloader
+sudo ln -sf ~/Clipboard-saavn-song-downloader/Start_linux.sh /usr/local/bin/saavn-downloader
 # We also need to create a soft link to "clipboard-saavn-song-downloader.py" in user's home dir since 
 # the "Start_linux" will run in home dir by install script and "python3" in it will search for file in home dir.
-sudo ln -sf ${SCRIPTPATH}/clipboard-saavn-song-downloader.py ~/clipboard-saavn-song-downloader.py
+sudo ln -sf ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py ~/clipboard-saavn-song-downloader.py
 
 echo -e "
 
