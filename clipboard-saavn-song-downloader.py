@@ -84,7 +84,7 @@ if __name__ == '__main__':
                 For more info, visit https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
         """)
 
-        print(" Starting Program....")
+        print("Starting Program....")
         start(test)
 
         print("""

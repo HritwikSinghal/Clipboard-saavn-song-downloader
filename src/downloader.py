@@ -10,7 +10,7 @@ import pyperclip
 import requests
 from mutagen.mp4 import *
 
-from src import saavnAPI
+from src import jioSaavnAPI
 from src import tools
 
 
@@ -50,7 +50,8 @@ class SongDownloader:
         else:
             self.url_type = self.url.split('/')[3]
 
-        songs_json = saavnAPI.start(self.url, self.log_file, test=self.test)
+        saavn_api_obj = jioSaavnAPI.API(self.url, self.log_file, self.test)
+        songs_json = saavn_api_obj.run()
 
         # todo: add check if 'songs_json' is empty or not
         try:
@@ -163,7 +164,9 @@ class SongDownloader:
             print(json.dumps(self.keys, indent=2))
 
     def download_song(self):
-        dec_url = saavnAPI.decrypt_url(self.keys['encrypted_media_url'], test=self.test)
+        my_decrypter = jioSaavnAPI.decryter(self.keys['encrypted_media_url'], test=self.test)
+        dec_url = my_decrypter.decrypt_url()
+
         filename = self.keys['title'] + '.m4a'
         filename = re.sub(r'[?*<>|/\\":]', '', filename)
 
