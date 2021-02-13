@@ -36,7 +36,7 @@ echo -e "
 
 printf "\n\n ${grn} Cloning Repo ${end} "
 rm -rf ~/Clipboard-saavn-song-downloader/
-git clone --depth 1 -b install_linux_fix https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader/
+git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader/
 cd ~/Clipboard-saavn-song-downloader/ || exit
 rm -rf .git/
 
