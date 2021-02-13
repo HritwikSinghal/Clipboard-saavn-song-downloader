@@ -50,13 +50,10 @@ printf "\n\n ${grn} Insatlling Xsel & Xclip ${end} "
 sudo apt install xsel xclip -y
 sudo pacman -S xsel xclip --noconfirm
 
-sudo chmod +x ./Start_linux.sh || exit
-
 printf "\n ${grn} ------------------------------------------------- ${end} "
+echo "python3 ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py" > ~/Clipboard-saavn-song-downloader/Start_linux.sh
+sudo chmod +x ./Start_linux.sh || exit
 sudo ln -sf ~/Clipboard-saavn-song-downloader/Start_linux.sh /usr/local/bin/saavn-downloader
-# We also need to create a soft link to "clipboard-saavn-song-downloader.py" in user's home dir since 
-# the "Start_linux" will run in home dir by install script and "python3" in it will search for file in home dir.
-sudo ln -sf ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py ~/clipboard-saavn-song-downloader.py
 
 echo -e "
 
