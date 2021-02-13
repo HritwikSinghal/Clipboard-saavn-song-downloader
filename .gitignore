@@ -2,7 +2,7 @@
 __pycache__/
 Base/apiKey.py
 song.txt
-test_bit.py
+test_bit
 
 # PyBuilder
 target/
