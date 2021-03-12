@@ -10,7 +10,7 @@ import pyperclip
 import requests
 from mutagen.mp4 import *
 
-from src import jioSaavnAPI
+from src import jio_saavn_API
 from src import tools
 
 
@@ -35,7 +35,7 @@ class SongDownloader:
 
         self.download_dir = download_dir
         self.log_file = log_file
-        self.test = test
+        self.test_bit = test
 
         self.keys = {}
         self.download_location = ''
@@ -44,13 +44,16 @@ class SongDownloader:
         self.song_downloaded = False
         self.tags_added = False
 
+    def set_url(self, url):
+        self.url = url
+
     def run(self):
         while not self.url:
             self.get_url()
         else:
             self.url_type = self.url.split('/')[3]
 
-        saavn_api_obj = jioSaavnAPI.API(self.url, self.log_file, self.test)
+        saavn_api_obj = jio_saavn_API.API(self.url, self.log_file, self.test_bit)
         songs_json = saavn_api_obj.run()
 
         # todo: add check if 'songs_json' is empty or not
@@ -60,7 +63,7 @@ class SongDownloader:
 
                 # for testing ####
                 try:
-                    if self.test:
+                    if self.test_bit:
                         os.chdir(self.download_dir)  # So that below text files are saved in download dir.
 
                         with open(song_info["title"] + '.txt', 'w+') as ab:
@@ -75,7 +78,7 @@ class SongDownloader:
                 if self.song_downloaded:
                     self.add_tags()
         except:
-            if self.test:
+            if self.test_bit:
                 traceback.print_exc()
                 self.url = ''
 
@@ -160,11 +163,11 @@ class SongDownloader:
 
         self.fix_done = True
 
-        if self.test:
+        if self.test_bit:
             print(json.dumps(self.keys, indent=2))
 
     def download_song(self):
-        my_decrypter = jioSaavnAPI.decryter(self.keys['encrypted_media_url'], test=self.test)
+        my_decrypter = jio_saavn_API.decryter(self.keys['encrypted_media_url'], test=self.test_bit)
         dec_url = my_decrypter.decrypt_url()
 
         filename = self.keys['title'] + '.m4a'

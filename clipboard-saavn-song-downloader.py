@@ -8,6 +8,27 @@ import traceback
 from src.downloader import SongDownloader
 
 
+def down_from_file(download_dir, log_file, test):
+    if os.path.isfile("songs_list.txt"):
+        print('Found "songs_list.txt", downloading songs from it first... ')
+        with open('songs_list.txt', 'r+') as song_file:
+            song_url_list = [str(x).strip() for x in song_file.readlines() if str(x).strip()]
+            my_downloader = SongDownloader(download_dir, log_file, test=test)
+
+            for song_url in song_url_list:
+                try:
+                    my_downloader.set_url(song_url)
+                    my_downloader.run()
+                except:
+                    if test:
+                        traceback.print_exc()
+                    continue
+
+            print('Song download from file complete, renaming file and moving to clipboard download...')
+
+        os.rename('songs_list.txt', 'songs_list_DONE_' + str(random.randint(1, 100000)) + '.txt')
+
+
 def start(test=0):
     # https://stackoverflow.com/questions/23255186/download-under-users-profile-directory
     # download_dir = os.path.expandvars('%userprofile%/Downloads/')  # where to put it
@@ -23,24 +44,7 @@ def start(test=0):
     # todo: fix below log file
     log_file = ''
 
-    if os.path.isfile("songs_list.txt"):
-        print('Found "songs_list.txt", downloading songs from it first... ')
-        with open('songs_list.txt', 'r+') as song_file:
-
-            song_url_list = [str(x).strip() for x in song_file.readlines()]
-            my_downloader = SongDownloader(download_dir, log_file, test=test)
-
-            for song_url in song_url_list:
-                try:
-                    my_downloader.url = song_url
-                    my_downloader.run()
-                except:
-                    if test:
-                        traceback.print_exc()
-                    continue
-
-            print('Song download from file complete, renaming file and moving to clipboard download...')
-        os.rename('songs_list.txt', 'songs_list_DONE_' + str(random.randint(1, 100000)) + '.txt')
+    down_from_file(download_dir, log_file, test)
 
     try:
         while True:
