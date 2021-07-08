@@ -45,17 +45,20 @@ pip3 install -r ./requirements.txt
 
 printf "\n\n ${grn} Upgrading requests ${end} "
 sudo pip3 install --upgrade requests
+pip3 install --upgrade requests
 
 printf "\n\n ${grn} Insatlling Xsel & Xclip ${end} "
 sudo apt install xsel xclip -y
-sudo pacman -S xsel xclip --noconfirm
+sudo pacman -S xsel xclip --noconfirm --needed
 
 printf "\n ${grn} ------------------------------------------------- ${end} "
-echo "python3 ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py" > ~/Clipboard-saavn-song-downloader/Start_linux.sh
-sudo chmod +x ./Start_linux.sh || exit
-sudo ln -sf ~/Clipboard-saavn-song-downloader/Start_linux.sh /usr/local/bin/saavn-downloader
+echo "python3 ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py" > ~/Clipboard-saavn-song-downloader/start_linux.sh
+sudo chmod +x ./start_linux.sh || exit
+sudo ln -sf ~/Clipboard-saavn-song-downloader/start_linux.sh /usr/local/bin/saavn-downloader
+
 
 echo -e "
+
 
 			██████╗░░█████╗░███╗░░██╗███████╗
 			██╔══██╗██╔══██╗████╗░██║██╔════╝
