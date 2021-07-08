@@ -17,8 +17,8 @@ class API:
         self.test = test_bit
 
         self.headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
-            'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0',
+            'referer': 'https://www.jiosaavn.com/song/tera-mera-rishta/GVkMdDYCYXU',
             'origin': 'https://www.jiosaavn.com'
         }
 
@@ -40,7 +40,7 @@ class API:
 
         self.getID()
         self.api_url = self.all_api_url[self.url_type].format(self.id)
-        res = requests.get(self.api_url, headers=self.headers)
+        res = requests.get(self.api_url, headers=self.headers, allow_redirects=True)
 
         data = str(res.text).strip()
 

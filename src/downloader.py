@@ -196,7 +196,7 @@ class SongDownloader:
         audio['\xa9nam'] = html.unescape(str(self.keys['title']))
         audio['\xa9ART'] = html.unescape(str(self.keys['primary_artists']))
         audio['\xa9alb'] = html.unescape(str(self.keys['album']))
-        audio['aART'] = html.unescape(str(self.keys['singers']))
+        # audio['aART'] = html.unescape(str(self.keys['singers']))                # Album Artist
         audio['\xa9wrt'] = html.unescape(str(self.keys['music']))
         audio['desc'] = html.unescape(str(self.keys['starring']))
         audio['\xa9gen'] = html.unescape(str(self.keys['label']))
