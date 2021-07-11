@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
 # todo: add colored text : https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
 # todo: fix artists and add support for Podcasts (shows)
-# todo: make it run concurrent
+# todo: make it support multithreading
 # todo: write tests
 # todo: use logger
 # todo: update lyrics function in saavnApi

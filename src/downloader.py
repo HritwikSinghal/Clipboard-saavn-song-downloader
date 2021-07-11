@@ -53,8 +53,8 @@ class SongDownloader:
         else:
             self.url_type = self.url.split('/')[3]
 
-        saavn_api_obj = jio_saavn_API.API(self.url, self.log_file, self.test_bit)
-        songs_json = saavn_api_obj.run()
+        saavn_api_obj = jio_saavn_API.API(log_file=self.log_file, test_bit=self.test_bit)
+        songs_json = saavn_api_obj.run(url=self.url)
 
         # todo: add check if 'songs_json' is empty or not
         try:
@@ -92,7 +92,7 @@ class SongDownloader:
         if str(url).startswith('https://www.jiosaavn.com'):
             print('got url: ', url)
 
-            self.url = url
+            self.set_url(url)
             self.url_type = self.url.split('/')[3]
 
     def get_imp_keys(self):
@@ -167,8 +167,8 @@ class SongDownloader:
             print(json.dumps(self.keys, indent=2))
 
     def download_song(self):
-        my_decrypter = jio_saavn_API.decryter(self.keys['encrypted_media_url'], test=self.test_bit)
-        dec_url = my_decrypter.decrypt_url()
+        my_decrypter = jio_saavn_API.decryter(test=self.test_bit)
+        dec_url = my_decrypter.decrypt_url(url=self.keys['encrypted_media_url'])
 
         filename = self.keys['title'] + '.m4a'
         filename = re.sub(r'[?*<>|/\\":]', '', filename)

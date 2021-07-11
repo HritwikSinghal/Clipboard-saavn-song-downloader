@@ -11,18 +11,18 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class API:
 
-    def __init__(self, url, log_file, test_bit=0):
-        self.log_file = log_file
-        self.url = url
-        self.test = test_bit
+    def __init__(self, log_file, test_bit=0):
+        self._log_file = log_file
+        self._url = ''
+        self._test = test_bit
 
-        self.headers = {
+        self._headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0',
             'referer': 'https://www.jiosaavn.com/song/tera-mera-rishta/GVkMdDYCYXU',
             'origin': 'https://www.jiosaavn.com'
         }
 
-        self.all_api_url = {
+        self._all_api_url = {
             'artist': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=artist&p=&n_song=10&n_album=14&sub_type=&category=&sort_order=&includeMetaTags=0&ctx=web6dot0&api_version=4&',
             'album': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=album&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
             'featured': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=playlist&p=1&n=20&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
@@ -30,53 +30,55 @@ class API:
             'top_search_results': 'https://www.jiosaavn.com/api.php?__call=content.getTopSearches&ctx=web6dot0&api_version=4&_format=json&_marker=0'
         }
 
-        self.id = ''
-        self.url_type = ''
-        self.api_url = ''
-        self.data = {}
+        self._id = ''
+        self._url_type = ''
+        self._api_url = ''
+        self._data = {}
 
-    def run(self):
-        self.url_type = self.url.split('/')[3]
+    def run(self, url):
+        self._url = url
+        self._url_type = self._url.split('/')[3]
 
-        self.getID()
-        self.api_url = self.all_api_url[self.url_type].format(self.id)
-        res = requests.get(self.api_url, headers=self.headers, allow_redirects=True)
+        self._getID()
+        self._api_url = self._all_api_url[self._url_type].format(self._id)
+        res = requests.get(self._api_url, headers=self._headers, allow_redirects=True)
 
         data = str(res.text).strip()
 
         try:
-            self.data = json.loads(data)
+            self._data = json.loads(data)
         except:
-            self.fixContent()
-            self.data = json.loads(self.data)
+            self._fixContent()
+            self._data = json.loads(self._data)
 
-        return self.data
+        return self._data
 
-    def getID(self):
-        self.id = str(self.url).split('/')[-1]
+    def _getID(self):
+        self._id = str(self._url).split('/')[-1]
 
-    def fixContent(self):
+    def _fixContent(self):
         # old
         # data = re.sub(r'<!DOCTYPE html>\s*<.*>?', '', data)
         # return data
 
         # this is fixed_json
-        self.data = [x for x in self.data.splitlines() if x.strip().startswith('{')][0]
+        self._data = [x for x in self._data.splitlines() if x.strip().startswith('{')][0]
 
 
 class decryter:
 
-    def __init__(self, url, test=0):
+    def __init__(self, test=0):
         self.headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
             'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
             'origin': 'https://www.jiosaavn.com'
         }
 
-        self.url = url
+        self.url = ''
         self.test = test
 
-    def decrypt_url(self):
+    def decrypt_url(self, url):
+        self.url = url
         des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
         enc_url = base64.b64decode(self.url.strip())
         dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
