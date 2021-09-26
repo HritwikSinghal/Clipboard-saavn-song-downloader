@@ -1,5 +1,6 @@
 import base64
 import json
+import re
 import traceback
 
 import requests
@@ -11,13 +12,13 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class API:
 
-    def __init__(self, log_file, test_bit=0):
+    def __init__(self, test_bit=0, log_file=''):
         self._log_file = log_file
         self._url = ''
         self._test = test_bit
 
         self._headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0',
             'referer': 'https://www.jiosaavn.com/song/tera-mera-rishta/GVkMdDYCYXU',
             'origin': 'https://www.jiosaavn.com'
         }
@@ -35,11 +36,28 @@ class API:
         self._api_url = ''
         self._data = {}
 
+    def _setID(self):
+        self._id = str(self._url).split('/')[-1]
+
+    def _fixContent(self):
+        # old
+        # data = re.sub(r'<!DOCTYPE html>\s*<.*>?', '', data)
+        # return data
+
+        # this is fixed_json
+        data = [
+            x for x in self._data.splitlines()
+            if x.strip().startswith('{')
+        ]
+
+        self._data = data[0]
+
     def run(self, url):
         self._url = url
+        re.sub(r'\?autoplay=enabled', '', self._url)
         self._url_type = self._url.split('/')[3]
 
-        self._getID()
+        self._setID()
         self._api_url = self._all_api_url[self._url_type].format(self._id)
         res = requests.get(self._api_url, headers=self._headers, allow_redirects=True)
 
@@ -53,23 +71,12 @@ class API:
 
         return self._data
 
-    def _getID(self):
-        self._id = str(self._url).split('/')[-1]
 
-    def _fixContent(self):
-        # old
-        # data = re.sub(r'<!DOCTYPE html>\s*<.*>?', '', data)
-        # return data
-
-        # this is fixed_json
-        self._data = [x for x in self._data.splitlines() if x.strip().startswith('{')][0]
-
-
-class decryter:
+class decrypter:
 
     def __init__(self, test=0):
         self.headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0',
             'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
             'origin': 'https://www.jiosaavn.com'
         }
@@ -77,7 +84,7 @@ class decryter:
         self.url = ''
         self.test = test
 
-    def decrypt_url(self, url):
+    def get_decrypted_url(self, url):
         self.url = url
         des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
         enc_url = base64.b64decode(self.url.strip())

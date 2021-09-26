@@ -5,7 +5,7 @@ import os
 import random
 import traceback
 
-from src.downloader import SongDownloader
+from src.saavn_downloader import SongDownloader
 
 
 def down_from_file(download_dir, log_file, test):
@@ -41,7 +41,7 @@ def start(test=0):
         os.mkdir(download_dir)
     print("Songs will be Downloaded to: ", download_dir)
 
-    # todo: fix below log file
+    # todo: use logger
     log_file = ''
 
     down_from_file(download_dir, log_file, test)
@@ -113,9 +113,9 @@ if __name__ == '__main__':
                 ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝  ░░░╚═╝░░░░╚════╝░░╚═════╝░╚═╝
         """)
 
+# todo: make it support multithreading
 # todo: add colored text : https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
 # todo: fix artists and add support for Podcasts (shows)
-# todo: make it support multithreading
 # todo: write tests
 # todo: use logger
 # todo: update lyrics function in saavnApi
