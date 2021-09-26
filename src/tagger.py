@@ -108,7 +108,7 @@ class Tagger:
         new_composer = tools.removeTrailingExtras(new_composer)
         self._keys["music"] = tools.removeDup(new_composer)
 
-        self._keys['image'] = self._keys['image'].replace('-150x150.jpg', '-500x500.jpg')
+        self._keys['image_url'] = self._keys['image_url'].replace('-150x150.jpg', '-500x500.jpg')
 
         self.fix_title()
 
