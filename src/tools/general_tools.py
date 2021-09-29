@@ -3,6 +3,10 @@ import re
 import traceback
 
 
+class Tools:
+    pass
+
+
 # ----------------------------------------------#
 
 
