@@ -9,10 +9,14 @@ from src.tools import downloader, saavn_API
 from src.tools.saavn_API import SaavnUrlDecrypter
 from src.tools.tagger import Tagger
 
+_LOGGER = logging.getLogger(__name__)
+
+test_bit = os.environ.get('DEBUG', default='0')
+
 
 class SaavnDownloader:
 
-    def __init__(self, download_dir, log_file, test=0):
+    def __init__(self, download_dir):
 
         self.headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
@@ -26,23 +30,17 @@ class SaavnDownloader:
             'album': 'list',
             'featured': 'list'
         }
-        self.url = ''
-        self.url_type = ''
+        self.url: str = ''
 
-        self.download_dir = download_dir
-        self.log_file = log_file
-        self.test_bit = test
+        self.download_dir: str = download_dir
 
-        self.keys = {}
-        self._download_location = ''
+        self.keys: dict = {}
+        self._download_location: str = ''
 
-    def set_url(self, url):
-        self.url = url
-
-    def get_url(self):
+    def __get_url(self) -> None:
         print('\nWaiting for url from clipboard....')
 
-        if not self.test_bit:
+        if not test_bit:
             url = pyperclip.waitForPaste()
         else:
             url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
@@ -52,46 +50,49 @@ class SaavnDownloader:
         if str(url).startswith('https://www.jiosaavn.com'):
             print('got url: ', url)
 
-            self.set_url(url)
-            self.url_type = self.url.split('/')[3]
+            self.url = url
+            _LOGGER.debug("url= " + self.url)
 
-    def __download_song(self):
+    def __download_song(self) -> None:
         # Fix title
         # todo: use tools class for this
         temp = self.keys.copy()
         title = Tagger(file_location='', keys=temp).fix_title()
 
         encrypted_url = self.keys['more_info']['encrypted_media_url']
-        dec_url = SaavnUrlDecrypter(test=self.test_bit).get_decrypted_url(url=encrypted_url)
+        dec_url = SaavnUrlDecrypter(test=test_bit).get_decrypted_url(url=encrypted_url)
 
-        my_downloader = downloader.FileDownloader(download_dir=self.download_dir, test_bit=self.test_bit)
+        my_downloader = downloader.FileDownloader(download_dir=self.download_dir, test_bit=test_bit)
         self._download_location = my_downloader.download(url=dec_url,
                                                          file_name=title,
                                                          file_extension='m4a')
 
-    def __add_tags(self):
+    def __add_tags(self) -> None:
         my_tagger = Tagger(file_location=self._download_location, keys=self.keys)
 
         # since we are supplying keys from saavn
         my_tagger.convert_saavn_keys()
         my_tagger.add_tags()
 
-    def run(self):
+    def run(self) -> None:
         while not self.url:
-            self.get_url()
+            self.__get_url()
         else:
-            self.url_type = self.url.split('/')[3]
+            url_type = self.url.split('/')[3]
 
-        songs_json = saavn_API.API(test_bit=self.test_bit).fetch_details(url=self.url)
+        input()
+        exit(0)
+
+        songs_json = saavn_API.API(test_bit=test_bit).fetch_details(url=self.url)
 
         # todo: add check if 'songs_json' is empty or not
         try:
-            for song_info in songs_json[self.all_types[self.url_type]]:
+            for song_info in songs_json[self.all_types[url_type]]:
                 self.keys = song_info
 
                 # ############## for testing ##############
                 try:
-                    if self.test_bit:
+                    if test_bit:
                         os.chdir(self.download_dir)  # So that below text files are saved in download dir.
 
                         with open(song_info["title"] + '.txt', 'w+') as ab:
@@ -104,6 +105,6 @@ class SaavnDownloader:
 
 
         except:
-            if self.test_bit:
+            if test_bit:
                 traceback.print_exc()
                 self.url = ''

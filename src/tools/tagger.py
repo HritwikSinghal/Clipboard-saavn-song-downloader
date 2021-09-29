@@ -139,6 +139,8 @@ class Tagger:
         self._keys["duration"] = self._keys["more_info"]["duration"]
 
     def add_tags(self):
+        # todo: update lyrics function in saavnApi
+
         print('Adding Tags.....')
 
         self.fix()
@@ -149,6 +151,7 @@ class Tagger:
         audio['\xa9alb'] = html.unescape(str(self._keys['album']))
         # audio['aART'] = html.unescape(str(self._keys['singers']))                # Album Artist
 
+        # use ‘\xa9lyr’ for lyrics
         audio['\xa9wrt'] = html.unescape(str(self._keys['music']))
         audio['desc'] = html.unescape(str(self._keys['starring']))
         audio['\xa9gen'] = html.unescape(str(self._keys['label']))

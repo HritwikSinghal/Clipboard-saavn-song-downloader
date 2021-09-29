@@ -20,14 +20,6 @@ class API:
         # To create a post request with payload as a dict, requests.get(url, data=payload)
         # payload = {"a" : 1, "b" : 2}
 
-        # self._all_api_url: dict = {
-        #     'song': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=song&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
-        #     'album': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=album&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
-        #     'artist': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=artist&p=&n_song=10&n_album=14&sub_type=&category=&sort_order=&includeMetaTags=0&ctx=web6dot0&api_version=4&',
-        #     'featured': 'https://www.jiosaavn.com/api.php?__call=webapi.get&token={0}&type=playlist&p=1&n=20&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0',
-        #     'top_search_results': 'https://www.jiosaavn.com/api.php?__call=content.getTopSearches&ctx=web6dot0&api_version=4&_format=json&_marker=0'
-        # }
-
         self._base_api_url = 'https://www.jiosaavn.com/api.php'
 
         self._payloads: dict = {
@@ -98,9 +90,9 @@ class API:
             'origin': 'https://www.jiosaavn.com'
         }
 
-        self._data: dict = {}
+        self._data: str = ''
 
-    def _fix_content(self):
+    def _fix_content(self) -> None:
         """Fixes the response returned by API if the response contains additional HTML tags."""
         # old
         # data = re.sub(r'<!DOCTYPE html>\s*<.*>?', '', data)
@@ -115,22 +107,21 @@ class API:
         self._data = data[0]
 
     def fetch_details(self, url) -> dict:
-        """ Returns the details of song/playlist/album in dict.
+        """ Returns the details of song/playlist/album in a dict.
         :param url: str: url of song/playlist/album etc.
         :return: dict: contains "songs" as key and a list as value. The list contain details of each song
         """
 
         re.sub(r'\?autoplay=enabled', '', url)
-        url_type = url.split('/')[3]  # song, album, artist etc
-        id_of_url_type = str(url).split('/')[-1]
+        url_type: str = url.split('/')[3]  # song, album, artist etc
+        id_of_url_type: str = str(url).split('/')[-1]
 
-        # url = self._payloads[url_type].format(id_of_url_type)
-        payload = self._payloads[url_type]
+        payload: dict = self._payloads[url_type]
         payload['token'] = id_of_url_type
 
         res = requests.get(self._base_api_url, headers=self._headers, params=payload, allow_redirects=True)
 
-        data = str(res.text).strip()
+        data: str = str(res.text).strip()
 
         try:
             self._data = json.loads(data)
@@ -138,7 +129,7 @@ class API:
             # input()
         except:
             self._fix_content()
-            self._data = json.loads(self._data)
+            self._data: dict = json.loads(self._data)
 
         return self._data
 
@@ -152,16 +143,18 @@ class SaavnUrlDecrypter:
             'origin': 'https://www.jiosaavn.com'
         }
 
-        self.url = ''
         self.test = test
 
-    def get_decrypted_url(self, url):
-        self.url = url
+    def get_decrypted_url(self, url: str) -> str:
+        """Takes encrypted URL string from saavn and returns a decrypted URL
+        :param url: str: encrypted url from saavn
+        :return: str: decrypted url
+        """
         des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
-        enc_url = base64.b64decode(self.url.strip())
-        dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
+        enc_url = base64.b64decode(url.strip())
+        dec_url: str = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
 
-        dec_url = str(dec_url).replace('_96.mp4', '_320.mp4').replace('http', 'https')
+        dec_url = dec_url.replace('_96.mp4', '_320.mp4').replace('http://', 'https://')
 
         # if self.test:
         #     print(dec_url)
@@ -211,8 +204,8 @@ class SaavnUrlDecrypter:
             if str(r.status_code) == '200':
                 return h_url
 
-            return None
+            return ''
         except:
             if self.test:
                 traceback.print_exc()
-            return None
+            return ''

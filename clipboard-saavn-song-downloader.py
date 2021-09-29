@@ -3,22 +3,50 @@ import os
 import random
 import traceback
 
+if os.path.isfile('test_bit'):
+    os.environ["DEBUG"] = "1"
+
 from src.saavn_downloader import SaavnDownloader
 
+# --------------------------------------------------------------------------------------------------- #
+# Dont use _LOGGER = logging.getLogger(__name__), it will not work.
+# See https://stackoverflow.com/questions/47608069/python-logging-multiple-modules
+_LOGGER = logging.getLogger()
+_LOGGER.setLevel(logging.DEBUG)
 
-def down_from_file(download_dir, log_file, test):
+_FORMATTER = logging.Formatter(
+    '%(asctime)s : [%(levelname)s] :  %(name)s : (%(filename)s).%(funcName)s(%(lineno)d) : %(message)s'
+)
+
+_FILE_HANDLER = logging.FileHandler('saavn_downloader.log')
+_FILE_HANDLER.setLevel(logging.DEBUG)
+_FILE_HANDLER.setFormatter(_FORMATTER)
+
+_STREAM_HANDLER = logging.StreamHandler()
+_STREAM_HANDLER.setLevel(logging.DEBUG)
+_STREAM_HANDLER.setFormatter(_FORMATTER)
+
+_LOGGER.addHandler(_FILE_HANDLER)
+_LOGGER.addHandler(_STREAM_HANDLER)
+
+# --------------------------------------------------------------------------------------------------- #
+
+test_bit = os.environ.get('DEBUG', default='0')
+
+
+def down_from_file(download_dir):
     if os.path.isfile("songs_list.txt"):
         print('Found "songs_list.txt", downloading songs from it first... ')
         with open('songs_list.txt', 'r+') as song_file:
             song_url_list = [str(x).strip() for x in song_file.readlines() if str(x).strip()]
-            my_downloader = SaavnDownloader(download_dir, log_file, test=test)
+            my_downloader = SaavnDownloader(download_dir)
 
             for song_url in song_url_list:
                 try:
-                    my_downloader.set_url(song_url)
+                    my_downloader.url = song_url
                     my_downloader.run()
                 except:
-                    if test:
+                    if test_bit:
                         traceback.print_exc()
                     continue
 
@@ -39,14 +67,11 @@ def start(test=0):
         os.mkdir(download_dir)
     print("Songs will be Downloaded to: ", download_dir)
 
-    # todo: use logger
-    log_file = ''
-
-    down_from_file(download_dir, log_file, test)
+    down_from_file(download_dir)
 
     try:
         while True:
-            my_downloader = SaavnDownloader(download_dir, log_file, test=test)
+            my_downloader = SaavnDownloader(download_dir)
             my_downloader.run()
 
     except:
@@ -56,23 +81,13 @@ def start(test=0):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='saavn-downloader.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
-    logging.info('Logging Started')
+    _LOGGER.info('Logging Started')
 
-    if os.path.isfile('test_bit'):
-        os.environ["DEBUG"] = "1"
-        logging.info('DEBUG mode ON')
-        test = 1
+    if test_bit == '1':
+        _LOGGER.info('DEBUG mode ON')
+        start()
     else:
-        os.environ["DEBUG"] = "0"
-        logging.info('DEBUG mode OFF')
-        test = 0
-
-    # os.environ.get('DEBUG', 'Not Set')
-
-    if test:
-        start(test)
-    else:
+        _LOGGER.info('DEBUG mode OFF')
         print("""\n
 
                 ░██████╗░█████╗░░█████╗░██╗░░░██╗███╗░░██╗  ░██████╗░█████╗░███╗░░██╗░██████╗░
@@ -99,7 +114,7 @@ if __name__ == '__main__':
         """)
 
         print("Starting Program....")
-        start(test)
+        start()
 
         print("""
                 If there were errors during running this program, please upload log file
@@ -122,14 +137,11 @@ if __name__ == '__main__':
                 ░░░██║░░░██║░░██║██║░░██║██║░╚███║██║░╚██╗  ░░░██║░░░╚█████╔╝╚██████╔╝██╗
                 ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝  ░░░╚═╝░░░░╚════╝░░╚═════╝░╚═╝
         """)
-        logging.info('Logging End')
+        _LOGGER.info('Logging End')
 
-# todo: make it support multithreading
 # todo: add colored text : https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
 # todo: fix artists and add support for Podcasts (shows)
 # todo: write tests
-# todo: use logger
-# todo: update lyrics function in saavnApi
 # todo: find about MITM attack and see song file in monuyadav for payload
 # todo:
 # todo:
