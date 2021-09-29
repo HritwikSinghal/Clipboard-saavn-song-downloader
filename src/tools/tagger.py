@@ -6,7 +6,7 @@ import urllib.request
 
 from mutagen.mp4 import *
 
-from src import tools
+from . import general_tools as tools
 
 
 class Tagger:
@@ -90,6 +90,7 @@ class Tagger:
             # json_data = re.sub(r'.\[\b.*?"\]', "", json_data)
             # actual_album = ''
         self._keys['title'] = tools.removeGibberish(self._keys['title'])
+        return self._keys['title']
 
     # todo: remove tools dependency, create a new class for it and import it wherever needed
     def fix(self):

@@ -11,6 +11,7 @@ html5lib = "*"
 pyperclip = "*"
 pytest = "*"
 pyDes = "*"
+youtube-dl = "*"
 
 [dev-packages]
 

@@ -1,16 +1,16 @@
 import json
+import logging
 import os
 import traceback
 
 import pyperclip
 
-from src import downloader
-from src import saavn_API
-from src.saavn_API import decrypter
-from src.tagger import Tagger
+from src.tools import downloader, saavn_API
+from src.tools.saavn_API import SaavnUrlDecrypter
+from src.tools.tagger import Tagger
 
 
-class SongDownloader:
+class SaavnDownloader:
 
     def __init__(self, download_dir, log_file, test=0):
 
@@ -42,8 +42,11 @@ class SongDownloader:
     def get_url(self):
         print('\nWaiting for url from clipboard....')
 
-        url = pyperclip.waitForPaste()
-        # url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
+        if not self.test_bit:
+            url = pyperclip.waitForPaste()
+        else:
+            url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
+
         pyperclip.copy('')
 
         if str(url).startswith('https://www.jiosaavn.com'):
@@ -54,13 +57,14 @@ class SongDownloader:
 
     def __download_song(self):
         # Fix title
+        # todo: use tools class for this
         temp = self.keys.copy()
         title = Tagger(file_location='', keys=temp).fix_title()
 
         encrypted_url = self.keys['more_info']['encrypted_media_url']
-        dec_url = decrypter(test=self.test_bit).get_decrypted_url(url=encrypted_url)
+        dec_url = SaavnUrlDecrypter(test=self.test_bit).get_decrypted_url(url=encrypted_url)
 
-        my_downloader = downloader.Downloader(download_dir=self.download_dir, test_bit=self.test_bit)
+        my_downloader = downloader.FileDownloader(download_dir=self.download_dir, test_bit=self.test_bit)
         self._download_location = my_downloader.download(url=dec_url,
                                                          file_name=title,
                                                          file_extension='m4a')
@@ -78,7 +82,7 @@ class SongDownloader:
         else:
             self.url_type = self.url.split('/')[3]
 
-        songs_json = saavn_API.API(test_bit=self.test_bit).run(url=self.url)
+        songs_json = saavn_API.API(test_bit=self.test_bit).fetch_details(url=self.url)
 
         # todo: add check if 'songs_json' is empty or not
         try:

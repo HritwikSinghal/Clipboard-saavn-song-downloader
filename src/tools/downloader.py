@@ -44,6 +44,7 @@ class FileDownloader:
 
     def download(self, url: str, file_name: str, file_extension: str) -> str:
         _filename = file_name + '.' + file_extension
+
         _filename = re.sub(r'[?*<>|/\\":]', '', _filename)
 
         file_path: str = os.path.join(self._download_dir, _filename)

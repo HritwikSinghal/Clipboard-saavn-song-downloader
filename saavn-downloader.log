@@ -1,0 +1,4 @@
+2021-09-29 20:05:20,824 Logging Started
+2021-09-29 20:05:20,824 DEBUG mode ON
+2021-09-29 20:05:20,923 Starting new HTTPS connection (1): www.jiosaavn.com:443
+2021-09-29 20:05:21,247 https://www.jiosaavn.com:443 "GET /api.php?__call=webapi.get&token=GjIBdCt%2CUX8&type=song&includeMetaTags=0&ctx=web6dot0&api_version=4&_format=json&_marker=0 HTTP/1.1" 200 1457

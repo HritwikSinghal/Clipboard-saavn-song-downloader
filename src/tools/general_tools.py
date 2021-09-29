@@ -3,7 +3,7 @@ import re
 import traceback
 
 
-class Tools:
+class GeneralTools:
     pass
 
 

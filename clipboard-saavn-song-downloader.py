@@ -1,11 +1,9 @@
-# for bat file "https://datatofish.com/batch-python-script/"
-
-
+import logging
 import os
 import random
 import traceback
 
-from src.saavn_downloader import SongDownloader
+from src.saavn_downloader import SaavnDownloader
 
 
 def down_from_file(download_dir, log_file, test):
@@ -13,7 +11,7 @@ def down_from_file(download_dir, log_file, test):
         print('Found "songs_list.txt", downloading songs from it first... ')
         with open('songs_list.txt', 'r+') as song_file:
             song_url_list = [str(x).strip() for x in song_file.readlines() if str(x).strip()]
-            my_downloader = SongDownloader(download_dir, log_file, test=test)
+            my_downloader = SaavnDownloader(download_dir, log_file, test=test)
 
             for song_url in song_url_list:
                 try:
@@ -48,7 +46,7 @@ def start(test=0):
 
     try:
         while True:
-            my_downloader = SongDownloader(download_dir, log_file, test=test)
+            my_downloader = SaavnDownloader(download_dir, log_file, test=test)
             my_downloader.run()
 
     except:
@@ -58,32 +56,44 @@ def start(test=0):
 
 
 if __name__ == '__main__':
-    test = 1 if os.path.isfile('test_bit') else 0
+    logging.basicConfig(filename='saavn-downloader.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
+    logging.info('Logging Started')
+
+    if os.path.isfile('test_bit'):
+        os.environ["DEBUG"] = "1"
+        logging.info('DEBUG mode ON')
+        test = 1
+    else:
+        os.environ["DEBUG"] = "0"
+        logging.info('DEBUG mode OFF')
+        test = 0
+
+    # os.environ.get('DEBUG', 'Not Set')
 
     if test:
         start(test)
     else:
         print("""\n
-            
+
                 ░██████╗░█████╗░░█████╗░██╗░░░██╗███╗░░██╗  ░██████╗░█████╗░███╗░░██╗░██████╗░
                 ██╔════╝██╔══██╗██╔══██╗██║░░░██║████╗░██║  ██╔════╝██╔══██╗████╗░██║██╔════╝░
                 ╚█████╗░███████║███████║╚██╗░██╔╝██╔██╗██║  ╚█████╗░██║░░██║██╔██╗██║██║░░██╗░
                 ░╚═══██╗██╔══██║██╔══██║░╚████╔╝░██║╚████║  ░╚═══██╗██║░░██║██║╚████║██║░░╚██╗
                 ██████╔╝██║░░██║██║░░██║░░╚██╔╝░░██║░╚███║  ██████╔╝╚█████╔╝██║░╚███║╚██████╔╝
                 ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚══╝  ╚═════╝░░╚════╝░╚═╝░░╚══╝░╚═════╝░
-        
+
                 ██████╗░░█████╗░░██╗░░░░░░░██╗███╗░░██╗██╗░░░░░░█████╗░░█████╗░██████╗░███████╗██████╗░
                 ██╔══██╗██╔══██╗░██║░░██╗░░██║████╗░██║██║░░░░░██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗
                 ██║░░██║██║░░██║░╚██╗████╗██╔╝██╔██╗██║██║░░░░░██║░░██║███████║██║░░██║█████╗░░██████╔╝
                 ██║░░██║██║░░██║░░████╔═████║░██║╚████║██║░░░░░██║░░██║██╔══██║██║░░██║██╔══╝░░██╔══██╗
                 ██████╔╝╚█████╔╝░░╚██╔╝░╚██╔╝░██║░╚███║███████╗╚█████╔╝██║░░██║██████╔╝███████╗██║░░██║
                 ╚═════╝░░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░░╚══╝╚══════╝░╚════╝░╚═╝░░╚═╝╚═════╝░╚══════╝╚═╝░░╚═╝
-                
+
                 － Ｂｙ Ｈｒｉｔｗｉｋ Ｓｉｎｇｈａｌ
         \n""")
 
         print("""
-                This program will Download songs from Jiosaavn based on the links you copy on your clipboard. 
+                This program will Download songs from Jiosaavn based on the links you copy on your clipboard.
                 Just run this program and copy links, it will download them in background.
                 For more info, visit https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
         """)
@@ -104,7 +114,7 @@ if __name__ == '__main__':
             ''')
 
         print("""
-        
+
                 ████████╗██╗░░██╗░█████╗░███╗░░██╗██╗░░██╗  ██╗░░░██╗░█████╗░██╗░░░██╗██╗
                 ╚══██╔══╝██║░░██║██╔══██╗████╗░██║██║░██╔╝  ╚██╗░██╔╝██╔══██╗██║░░░██║██║
                 ░░░██║░░░███████║███████║██╔██╗██║█████═╝░  ░╚████╔╝░██║░░██║██║░░░██║██║
@@ -112,6 +122,7 @@ if __name__ == '__main__':
                 ░░░██║░░░██║░░██║██║░░██║██║░╚███║██║░╚██╗  ░░░██║░░░╚█████╔╝╚██████╔╝██╗
                 ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝  ░░░╚═╝░░░░╚════╝░░╚═════╝░╚═╝
         """)
+        logging.info('Logging End')
 
 # todo: make it support multithreading
 # todo: add colored text : https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
