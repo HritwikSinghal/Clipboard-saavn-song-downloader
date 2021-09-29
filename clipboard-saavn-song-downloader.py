@@ -9,7 +9,7 @@ if os.path.isfile('test_bit'):
 from src.saavn_downloader import SaavnDownloader
 
 # --------------------------------------------------------------------------------------------------- #
-# Dont use _LOGGER = logging.getLogger(__name__), it will not work.
+# Dont use _LOGGER = logging.getLogger(__name__) in root module, it will not work.
 # See https://stackoverflow.com/questions/47608069/python-logging-multiple-modules
 _LOGGER = logging.getLogger()
 _LOGGER.setLevel(logging.DEBUG)
@@ -18,12 +18,14 @@ _FORMATTER = logging.Formatter(
     '%(asctime)s : [%(levelname)s] :  %(name)s : (%(filename)s).%(funcName)s(%(lineno)d) : %(message)s'
 )
 
+# Print all Log messages to file for debugging
 _FILE_HANDLER = logging.FileHandler('saavn_downloader.log')
 _FILE_HANDLER.setLevel(logging.DEBUG)
 _FILE_HANDLER.setFormatter(_FORMATTER)
 
+# Print only Log messages upper than warning to output since we dont want user to see debug messages
 _STREAM_HANDLER = logging.StreamHandler()
-_STREAM_HANDLER.setLevel(logging.DEBUG)
+_STREAM_HANDLER.setLevel(logging.WARNING)
 _STREAM_HANDLER.setFormatter(_FORMATTER)
 
 _LOGGER.addHandler(_FILE_HANDLER)
@@ -74,10 +76,10 @@ def start(test=0):
             my_downloader = SaavnDownloader(download_dir)
             my_downloader.run()
 
-    except:
-        if test:
-            traceback.print_exc()
+    except Exception as e:
+        _LOGGER.error(traceback.format_exc())
         print("\nExiting....")
+        exit(0)
 
 
 if __name__ == '__main__':
@@ -117,10 +119,8 @@ if __name__ == '__main__':
         start()
 
         print("""
-                If there were errors during running this program, please upload log file
-                named 'Clipboard-saavn-song-downloader_LOGS.txt' in each dir and open an issue on github
-                you can find those log files by using default search in folders or by manually
-                finding each.
+                If there were errors while running this program, Please open an issue on github
+                and upload log file named 'saavn-downloader.log' there. 
             """)
         print('''
                 Thank you for Using this program....

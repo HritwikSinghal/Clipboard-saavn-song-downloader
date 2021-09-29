@@ -1,5 +1,7 @@
 import base64
 import json
+import logging
+import os
 import re
 import traceback
 
@@ -8,6 +10,10 @@ import urllib3.exceptions
 from pyDes import *
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+_LOGGER = logging.getLogger(__name__)
+
+test_bit = os.environ.get('DEBUG', default='0')
 
 
 class API:
@@ -114,6 +120,7 @@ class API:
 
         re.sub(r'\?autoplay=enabled', '', url)
         url_type: str = url.split('/')[3]  # song, album, artist etc
+
         id_of_url_type: str = str(url).split('/')[-1]
 
         payload: dict = self._payloads[url_type]
@@ -125,12 +132,16 @@ class API:
 
         try:
             self._data = json.loads(data)
-            # print(json.dumps(self._data, indent=2))
-            # input()
-        except:
+            # _LOGGER.debug(json.dumps(self._data, indent=2))
+
+        except Exception as e:
+            _LOGGER.warning("Some error in loading data returned by Saavn to json")
+            _LOGGER.warning(traceback.format_exc())
+
             self._fix_content()
             self._data: dict = json.loads(self._data)
 
+        _LOGGER.debug("Fixed data = " + str(self._data))
         return self._data
 
 
