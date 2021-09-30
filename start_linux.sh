@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python3 clipboard-saavn-song-downloader.py
+python3 ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py

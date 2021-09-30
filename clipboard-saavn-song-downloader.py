@@ -4,7 +4,7 @@ import random
 import traceback
 
 if os.path.isfile('test_bit'):
-    os.environ["DEBUG"] = "0"
+    os.environ["DEBUG"] = "1"
 
 from src.saavn_downloader import SaavnDownloader
 
