@@ -67,7 +67,7 @@ class SaavnDownloader:
         encrypted_url: str = self.keys['more_info']['encrypted_media_url']
         _LOGGER.debug('Encrypted URL = ' + encrypted_url)
 
-        dec_url: str = SaavnUrlDecrypter(test=test_bit).get_decrypted_url(url=encrypted_url)
+        dec_url: str = SaavnUrlDecrypter().get_decrypted_url(url=encrypted_url)
         _LOGGER.debug('Decrypted URL = ' + dec_url)
 
         # _download_file_location is the absolute path (along with filename and extension) where file is to be saved.
