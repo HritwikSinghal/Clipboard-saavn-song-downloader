@@ -1,8 +1,14 @@
 import json
+import logging
+import os
 import time
 import traceback
 
 import requests
+
+_LOGGER = logging.getLogger(__name__)
+
+test_bit = os.environ.get('DEBUG', default='0')
 
 
 def _pp_dict(json_dict: dict):
@@ -36,7 +42,7 @@ class SearX:
             'garuda': 'https://searx.garudalinux.org/search',
         }
 
-    def get_results_json(self, search_query: str):
+    def get_results(self, search_query: str) -> dict:
         """
         :param search_query: String to search on SearX
         :return: A dict containing Results from SearX in Json format
@@ -49,10 +55,10 @@ class SearX:
         response = ''
         while response == '':
             try:
-                response = requests.post(base_url, params=params, headers=self._headers, allow_redirects=True)
-            except:
+                response = requests.post(base_url, data=params, headers=self._headers, allow_redirects=True)
+            except Exception as e:
                 time.sleep(15)
-                traceback.print_exc()
+                _LOGGER.warning(traceback.format_exc())
             # print(response.url)
             # self._pp_dict(response.json())
 

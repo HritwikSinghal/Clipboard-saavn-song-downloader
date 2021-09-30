@@ -18,10 +18,7 @@ test_bit = os.environ.get('DEBUG', default='0')
 
 class API:
 
-    def __init__(self, test_bit=0, log_file=''):
-        self._test = test_bit
-        self._log_file = log_file
-
+    def __init__(self):
         # To create a get request with payload as a dict, requests.get(url, params=payload)
         # To create a post request with payload as a dict, requests.get(url, data=payload)
         # payload = {"a" : 1, "b" : 2}
@@ -147,17 +144,15 @@ class API:
 
 class SaavnUrlDecrypter:
 
-    def __init__(self, test=0):
+    def __init__(self):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0',
             'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
             'origin': 'https://www.jiosaavn.com'
         }
 
-        self.test = test
-
     def get_decrypted_url(self, url: str) -> str:
-        """Takes encrypted URL string from saavn and returns a decrypted URL
+        """Takes encrypted URL string from saavn, and returns the decrypted URL
         :param url: str: encrypted url from saavn
         :return: str: decrypted url
         """
@@ -166,11 +161,6 @@ class SaavnUrlDecrypter:
         dec_url: str = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
 
         dec_url = dec_url.replace('_96.mp4', '_320.mp4').replace('http://', 'https://')
-
-        # if self.test:
-        #     print(dec_url)
-        #     print("NOTE: SEE SaavnAPI, it is returning this url without checking....\n" * 5)
-        #     return dec_url
 
         try:
             aac_url = dec_url[:]
@@ -217,6 +207,5 @@ class SaavnUrlDecrypter:
 
             return ''
         except:
-            if self.test:
-                traceback.print_exc()
+            _LOGGER.error(traceback.format_exc())
             return ''

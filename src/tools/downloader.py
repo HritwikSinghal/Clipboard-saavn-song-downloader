@@ -20,7 +20,7 @@ class FileDownloader:
             'origin': 'https://www.jiosaavn.com'
         }
 
-    def _download(self, data):
+    def _download(self, data) -> None:
         url, filename, file_path = data
 
         print(f"Downloading '{filename}'.....")
@@ -43,10 +43,10 @@ class FileDownloader:
             executor.map(self._download, data_list)
 
 
-def _default_hook(d):
+def _default_hook(d: dict) -> None:
     if d['status'] == 'finished':
         file_tuple = os.path.split(os.path.abspath(d['filename']))
-        print("Done downloading {}".format(file_tuple[1]))
+        print(f"Done downloading {file_tuple[1]}")
     if d['status'] == 'downloading':
         print(d['filename'], d['_percent_str'], d['_eta_str'])
 
@@ -57,8 +57,8 @@ class YTDLDownloader:
     """
 
     def __init__(self, prefix='', save_dir: str = '', ydl_opts=None):
-        self._prefix = prefix
-        self._save_dir = os.path.expanduser("~/Downloads/Video") if save_dir == '' else save_dir
+        self._prefix: str = prefix
+        self._save_dir: str = os.path.expanduser("~/Downloads/Video") if save_dir == '' else save_dir
         self._ydl_opts: dict = {
             'progress_hooks': [_default_hook],
             'quiet': True,
@@ -69,13 +69,13 @@ class YTDLDownloader:
     def set_prefix(self, prefix):
         self._prefix = prefix
 
-    def get_prefix(self):
+    def get_prefix(self) -> str:
         return self._prefix
 
     def set_save_dir(self, save_dir):
         self._save_dir = save_dir
 
-    def get_save_dir(self):
+    def get_save_dir(self) -> str:
         return self._save_dir
 
     def __get_urls_from_playlist(self, playlist_url) -> list[str]:
@@ -128,7 +128,7 @@ class YTDLDownloader:
 
         return new_list
 
-    def _download(self, download_url):
+    def _download(self, download_url) -> None:
         while True:
             try:
                 with youtube_dl.YoutubeDL(self._ydl_opts) as ydl:

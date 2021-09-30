@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
         print("""
                 If there were errors while running this program, Please open an issue on github
-                and upload log file named 'saavn-downloader.log' there. 
+                and upload log file named 'saavn-downloader.log' there.
             """)
         print('''
                 Thank you for Using this program....

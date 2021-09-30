@@ -1,5 +1,7 @@
 import html
 import json
+import logging
+import os
 import re
 import urllib
 import urllib.request
@@ -7,6 +9,10 @@ import urllib.request
 from mutagen.mp4 import *
 
 from . import general_tools as tools
+
+_LOGGER = logging.getLogger(__name__)
+
+test_bit = os.environ.get('DEBUG', default='0')
 
 
 class Tagger:
@@ -43,10 +49,9 @@ class Tagger:
 
     """
 
-    def __init__(self, file_location: str, keys: dict, test_bit=0):
+    def __init__(self, file_location: str, keys: dict):
         self._keys = keys
         self._file_location: str = file_location
-        self.test_bit = test_bit
 
     # -------------------------------------------------------- #
 
@@ -115,8 +120,7 @@ class Tagger:
         self._keys["album"] = tools.removeGibberish(self._keys["album"]).strip()
         self._keys["album"] = self._keys["album"] + ' (' + self._keys['year'] + ')'
 
-        if self.test_bit:
-            print(json.dumps(self._keys, indent=2))
+        _LOGGER.debug(json.dumps(self._keys, indent=2))
 
     def convert_saavn_keys(self):
         """

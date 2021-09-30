@@ -98,7 +98,7 @@ class SaavnDownloader:
             url_type = self.url.split('/')[3]
             _LOGGER.debug("url type = " + url_type)
 
-        songs_json: dict = saavn_API.API(test_bit=test_bit).fetch_details(url=self.url)
+        songs_json: dict = saavn_API.API().fetch_details(url=self.url)
         _LOGGER.debug(songs_json)
 
         # todo: add check if 'songs_json' is empty or not
