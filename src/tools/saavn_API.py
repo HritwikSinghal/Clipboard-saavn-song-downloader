@@ -12,7 +12,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 _LOGGER = logging.getLogger(__name__)
 
-test_bit = os.environ.get('DEBUG', default='0')
+test_bit = int(os.environ.get('DEBUG', default='0'))
 
 
 class API:

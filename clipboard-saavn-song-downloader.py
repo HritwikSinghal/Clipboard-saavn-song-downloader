@@ -4,7 +4,7 @@ import random
 import traceback
 
 if os.path.isfile('test_bit'):
-    os.environ["DEBUG"] = "1"
+    os.environ["DEBUG"] = "0"
 
 from src.saavn_downloader import SaavnDownloader
 
@@ -33,7 +33,7 @@ _LOGGER.addHandler(_STREAM_HANDLER)
 
 # --------------------------------------------------------------------------------------------------- #
 
-test_bit = os.environ.get('DEBUG', default='0')
+test_bit = int(os.environ.get('DEBUG', default='0'))
 
 
 def down_from_file(download_dir):
@@ -48,8 +48,7 @@ def down_from_file(download_dir):
                     my_downloader.url = song_url
                     my_downloader.run()
                 except:
-                    if test_bit:
-                        traceback.print_exc()
+                    _LOGGER.warning(traceback.format_exc())
                     continue
 
             print('Song download from file complete, renaming file and moving to clipboard download...')
@@ -85,7 +84,7 @@ def start(test=0):
 if __name__ == '__main__':
     _LOGGER.info('Logging Started')
 
-    if test_bit == '1':
+    if test_bit == 1:
         _LOGGER.info('DEBUG mode ON')
         start()
     else:

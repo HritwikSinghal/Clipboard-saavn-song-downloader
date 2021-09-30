@@ -8,7 +8,7 @@ import requests
 
 _LOGGER = logging.getLogger(__name__)
 
-test_bit = os.environ.get('DEBUG', default='0')
+test_bit = int(os.environ.get('DEBUG', default='0'))
 
 
 def _pp_dict(json_dict: dict):

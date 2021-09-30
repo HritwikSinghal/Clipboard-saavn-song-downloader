@@ -12,7 +12,7 @@ from src.tools.tagger import Tagger
 
 _LOGGER = logging.getLogger(__name__)
 
-test_bit = os.environ.get('DEBUG', default='0')
+test_bit = int(os.environ.get('DEBUG', default='0'))
 
 
 class SaavnDownloader:
@@ -41,12 +41,8 @@ class SaavnDownloader:
     def __get_url(self) -> None:
         print('\nWaiting for url from clipboard....')
 
-        if not test_bit:
-            url = pyperclip.waitForPaste()
-            _LOGGER.debug(f"Got {url} from clipboard")
-        else:
-            url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
-            _LOGGER.debug("Testing, so Set url to " + url)
+        url = pyperclip.waitForPaste()
+        _LOGGER.debug(f"Got {url} from clipboard")
 
         pyperclip.copy('')
 
@@ -92,6 +88,8 @@ class SaavnDownloader:
         _LOGGER.debug("Adding tags Done")
 
     def run(self) -> None:
+        if test_bit:
+            self.url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
         while not self.url:
             self.__get_url()
         else:

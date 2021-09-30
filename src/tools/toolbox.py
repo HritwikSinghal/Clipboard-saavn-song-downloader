@@ -4,7 +4,7 @@ import re
 
 _LOGGER = logging.getLogger(__name__)
 
-test_bit = os.environ.get('DEBUG', default='0')
+test_bit = int(os.environ.get('DEBUG', default='0'))
 
 
 class GeneralTools:
