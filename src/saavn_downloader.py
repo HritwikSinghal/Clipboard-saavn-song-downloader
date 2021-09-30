@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 import traceback
 
 import pyperclip
@@ -35,7 +36,7 @@ class SaavnDownloader:
         self.download_dir: str = download_dir
 
         self.keys: dict = {}
-        self._download_location: str = ''
+        self._download_file_location: str = ''
 
     def __get_url(self) -> None:
         print('\nWaiting for url from clipboard....')
@@ -55,29 +56,33 @@ class SaavnDownloader:
             self.url = url
             _LOGGER.debug("Got url = " + self.url)
 
-    def __download_song(self) -> None:
+    def __download_song(self, title: str, file_name: str) -> None:
+        """ Download the song.
+        :param title: str: title of file to be downloaded. Will be used only for printing
+        :param file_name: str: name + extension of file to be saved
+        :return: None
+        """
         _LOGGER.debug("Downloading song")
-
-        # todo: Fix title & use tools class for this
-        temp = self.keys.copy()
-        title = Tagger(file_location='', keys=temp).fix_title()
-        _LOGGER.debug("title = " + title)
 
         encrypted_url: str = self.keys['more_info']['encrypted_media_url']
         _LOGGER.debug('Encrypted URL = ' + encrypted_url)
+
         dec_url: str = SaavnUrlDecrypter(test=test_bit).get_decrypted_url(url=encrypted_url)
         _LOGGER.debug('Decrypted URL = ' + dec_url)
 
-        my_downloader = downloader.FileDownloader(download_dir=self.download_dir, test_bit=test_bit)
-        self._download_location = my_downloader.download(url=dec_url,
-                                                         file_name=title,
-                                                         file_extension='m4a')
+        # _download_file_location is the absolute path (along with filename and extension) where file is to be saved.
+        # So it should be like '/home/user/downloads/song_name.m4a'
+        self._download_file_location: str = os.path.join(self.download_dir, file_name)
+        data_list = [
+            (dec_url, title, self._download_file_location),
+        ]
 
-        _LOGGER.debug("download_location = " + self._download_location)
+        my_downloader = downloader.FileDownloader()
+        my_downloader.download(data_list)
 
     def __add_tags(self) -> None:
         _LOGGER.debug("Adding tags")
-        my_tagger = Tagger(file_location=self._download_location, keys=self.keys)
+        my_tagger = Tagger(file_location=self._download_file_location, keys=self.keys)
 
         # since we are supplying keys from saavn
         _LOGGER.debug("Converting saavn keys")
@@ -101,6 +106,14 @@ class SaavnDownloader:
             for song_info in songs_json[self.all_types[url_type]]:
                 self.keys = song_info
 
+                # todo: Fix title & use tools class for this
+                temp = self.keys.copy()
+                title = Tagger(file_location='', keys=temp).fix_title()
+                _LOGGER.debug("title = " + title)
+
+                file_name: str = title + '.' + 'm4a'
+                file_name = re.sub(r'[?*<>|/\\":]', '', file_name)
+
                 # ############## for testing ##############
                 if test_bit == '1':
                     try:
@@ -113,7 +126,7 @@ class SaavnDownloader:
                         _LOGGER.error(traceback.format_exc())
                 # ############# ############# #############
 
-                self.__download_song()
+                self.__download_song(title, file_name)
                 self.__add_tags()
 
         except Exception as e:

@@ -139,6 +139,7 @@ if __name__ == '__main__':
         """)
         _LOGGER.info('Logging End')
 
+# Todo : fix gnome wayland bug
 # todo: add colored text : https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
 # todo: fix artists and add support for Podcasts (shows)
 # todo: write tests

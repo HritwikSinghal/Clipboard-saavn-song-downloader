@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 import time
 import traceback
 from concurrent.futures.process import ProcessPoolExecutor
@@ -14,54 +13,34 @@ test_bit = os.environ.get('DEBUG', default='0')
 
 
 class FileDownloader:
-    def __init__(self, download_dir, test_bit=0):
-        self._download_dir: str = download_dir
-        self.keys: dict = {}
-        self.test_bit = test_bit
-        self._url: str = ''
-        self._file_name: str = ''
-
+    def __init__(self):
         self.headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
             'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
             'origin': 'https://www.jiosaavn.com'
         }
 
-    # ----------------------------------- #
-    def get_url(self) -> str:
-        return self._url
+    def _download(self, data):
+        url, filename, file_path = data
 
-    def set_url(self, encrypted_url: str):
-        self._url = encrypted_url
-
-    def get_file_name(self) -> str:
-        return self._file_name
-
-    def set_file_name(self, title: str):
-        self._file_name = title
-
-    def get_download_dir(self) -> str:
-        return self._download_dir
-
-    def set_download_dir(self, download_dir: str):
-        self._download_dir = download_dir
-
-    # ----------------------------------- #
-
-    def download(self, url: str, file_name: str, file_extension: str) -> str:
-        _filename = file_name + '.' + file_extension
-        _filename = re.sub(r'[?*<>|/\\":]', '', _filename)
-        file_path: str = os.path.join(self._download_dir, _filename)
-
-        print(f"Downloading '{file_name}'.....")
+        print(f"Downloading '{filename}'.....")
         raw_data = requests.get(url, stream=True, headers=self.headers)
         with open(file_path, "wb") as raw_file:
             for chunk in raw_data.iter_content(chunk_size=2048):
                 if chunk:
                     raw_file.write(chunk)
 
-        print("Download Successful")
-        return file_path
+        print(f"'{filename}' Downloaded successfully")
+
+    def download(self, data_list: list[tuple]) -> None:
+        """
+        :param data_list: list[tuple]: a list of tuples. Each tuple contains (url: str, filename: str, download_file_path: str)
+        :return: None
+        """
+
+        # Parallel download files
+        with ProcessPoolExecutor(max_workers=4) as executor:
+            executor.map(self._download, data_list)
 
 
 def _default_hook(d):
@@ -168,10 +147,6 @@ class YTDLDownloader:
 
         os.chdir(self._save_dir)
         print("Saving to ", self._save_dir)
-
-        # for x in download_url_list:
-        #     print(x)
-        # input()
 
         with ProcessPoolExecutor(max_workers=4) as executor:
             executor.map(self._download, download_url_list)
