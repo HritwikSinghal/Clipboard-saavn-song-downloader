@@ -141,7 +141,7 @@ class API:
             self._fix_content()
             self._data: dict = json.loads(self._data)
 
-        _LOGGER.debug("Fixed data = " + str(self._data))
+        _LOGGER.debug("data = " + str(self._data))
         return self._data
 
 

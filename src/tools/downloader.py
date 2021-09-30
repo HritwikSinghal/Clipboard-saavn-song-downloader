@@ -1,10 +1,16 @@
+import logging
 import os
 import re
 import time
 import traceback
+from concurrent.futures.process import ProcessPoolExecutor
 
 import requests
 import youtube_dl
+
+_LOGGER = logging.getLogger(__name__)
+
+test_bit = os.environ.get('DEBUG', default='0')
 
 
 class FileDownloader:
@@ -44,9 +50,7 @@ class FileDownloader:
 
     def download(self, url: str, file_name: str, file_extension: str) -> str:
         _filename = file_name + '.' + file_extension
-
         _filename = re.sub(r'[?*<>|/\\":]', '', _filename)
-
         file_path: str = os.path.join(self._download_dir, _filename)
 
         print(f"Downloading '{file_name}'.....")
@@ -71,22 +75,17 @@ def _default_hook(d):
 class YTDLDownloader:
     """
     Inputs url as str, Downloads the video/audio to download dir
-    Returns a code:
-            1 = Successfull
-            0 = wrong parameter
-            -1/None = error
     """
 
-    def __init__(self, download_url='https://www.youtube.com/watch?v=VdyBtGaspss', prefix=''):
-        self._download_url: str = download_url
+    def __init__(self, prefix='', save_dir: str = '', ydl_opts=None):
         self._prefix = prefix
-        self._save_dir = os.path.expanduser("~/Downloads/Video")
+        self._save_dir = os.path.expanduser("~/Downloads/Video") if save_dir == '' else save_dir
         self._ydl_opts: dict = {
             'progress_hooks': [_default_hook],
             'quiet': True,
             'no_warnings': True,
             'outtmpl': '%(episode_number)s - %(title)s.%(ext)s'
-        }
+        } if ydl_opts is None else ydl_opts
 
     def set_prefix(self, prefix):
         self._prefix = prefix
@@ -94,31 +93,85 @@ class YTDLDownloader:
     def get_prefix(self):
         return self._prefix
 
-    def set_download_url(self, download_url):
-        self._download_url = download_url
-
-    def get_download_url(self):
-        return self._download_url
-
     def set_save_dir(self, save_dir):
         self._save_dir = save_dir
 
     def get_save_dir(self):
         return self._save_dir
 
-    def start(self):
+    def __get_urls_from_playlist(self, playlist_url) -> list[str]:
+        """Get the url of every video in a playlist
+        :param playlist_url: url of playlist
+        :return: list: list of urls of all videos in that playlist
+        """
+        return_list = []
+
+        base_url = 'https://youtube.com/watch?v='
+        with youtube_dl.YoutubeDL(self._ydl_opts) as ydl:
+            result = ydl.extract_info(playlist_url, download=False)
+            if 'entries' in result:
+                # Can be a playlist or a list of videos
+                video = result['entries']
+
+                # loops entries to grab each video_url
+                for i, item in enumerate(video):
+                    video = result['entries'][i]
+                    # print(base_url + video['id'])
+                    return_list.append(str(base_url + video['id']))
+
+                    """
+                    Other things we can extract
+                    result['entries'][i]['webpage_url']  # url of video
+                    result['entries'][i]['title']  # title of video
+                    result['entries'][i]['uploader']  # username of uploader
+                    result['entries'][i]['playlist']  # name of the playlist
+                    result['entries'][i]['playlist_index']  # order number of video
+                    """
+
+        return return_list
+
+    def __check_for_playlist(self, list_of_download_url: list) -> list[str]:
+        """Check if any url in list is a playlist url and extend old list with them
+        :param list_of_download_url: list: list of all urls
+        :return: list: new list concatenating the urls af individual videos of playlists
+        """
+        new_list = []
+        for url in list_of_download_url:
+            if url.startswith("https://www.youtube.com") and ('playlist' in url or '&list=' in url):
+                new_list.extend(self.__get_urls_from_playlist(url))
+            else:
+                new_list.append(url)
+
         os.chdir(self._save_dir)
-        print("Saving to ", self._save_dir)
+        with open('url_list.txt', 'w+') as myfile:
+            for x in new_list:
+                myfile.writelines(x)
 
-        if self._download_url == '':
-            return 0  # means something is wrong with your params
+        return new_list
 
+    def _download(self, download_url):
         while True:
             try:
                 with youtube_dl.YoutubeDL(self._ydl_opts) as ydl:
-                    ydl.download([self._download_url])
+                    ydl.download([download_url])
             except:
                 time.sleep(15)
-                traceback.print_exc()
-            else:
-                return 1
+                _LOGGER.debug(traceback.format_exc())
+
+    def download(self, download_url_list: list[str] = None) -> None:
+        if not len(download_url_list) > 0:
+            _LOGGER.error("Input list has length <= 0")
+            return None
+
+        # Get individual videos from a playlist and download them also in parallel
+        download_url_list = self.__check_for_playlist(download_url_list)
+
+        os.chdir(self._save_dir)
+        print("Saving to ", self._save_dir)
+
+        # for x in download_url_list:
+        #     print(x)
+        # input()
+
+        with ProcessPoolExecutor(max_workers=4) as executor:
+            executor.map(self._download, download_url_list)

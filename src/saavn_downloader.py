@@ -64,9 +64,9 @@ class SaavnDownloader:
         _LOGGER.debug("title = " + title)
 
         encrypted_url: str = self.keys['more_info']['encrypted_media_url']
-        _LOGGER.debug(encrypted_url)
+        _LOGGER.debug('Encrypted URL = ' + encrypted_url)
         dec_url: str = SaavnUrlDecrypter(test=test_bit).get_decrypted_url(url=encrypted_url)
-        _LOGGER.debug(dec_url)
+        _LOGGER.debug('Decrypted URL = ' + dec_url)
 
         my_downloader = downloader.FileDownloader(download_dir=self.download_dir, test_bit=test_bit)
         self._download_location = my_downloader.download(url=dec_url,
