@@ -107,8 +107,8 @@ class SaavnDownloader:
                 self.keys = song_info
 
                 # todo: Fix title & use tools class for this
-                temp = self.keys.copy()
-                title = Tagger(file_location='', keys=temp).fix_title()
+                title = self.keys['title']
+                title, _ = Tagger('', {}).fix_title(title)
                 _LOGGER.debug("title = " + title)
 
                 file_name: str = title + '.' + 'm4a'

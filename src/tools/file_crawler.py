@@ -32,11 +32,10 @@ class File_Crawler:
     def __init__(self):
         self._exclude_dirs: dict = {}
 
-    def _get_file_list(self, folder_name: str) -> list:
+    def _get_file_list(self, folder_name: str) -> list[str]:
         """
         :param folder_name: str : Folder name where files are stored, absolute path
-        :return file_list : list : List of files in that folder,
-                stores a tuple = (absolute path of file's folder : str, name of file : str, downloaded: bool)
+        :return: list[str]: List of absolute path to files in the file_dir
         """
 
         """
@@ -47,15 +46,16 @@ class File_Crawler:
         """
 
         # Skip the excluded directories
-        for (ex_dir, rec_flag) in self._exclude_dirs.items():
-            if rec_flag == '1':
-                if str(ex_dir) in folder_name:
-                    print("Rec Skipping files in ", folder_name)
-                    return []
-            else:
-                if str(folder_name).endswith(ex_dir):
-                    print("Skipping files in ", folder_name)
-                    return []
+        if self._exclude_dirs:
+            for (ex_dir, exclude_sub_dir) in self._exclude_dirs.items():
+                if exclude_sub_dir == '1':
+                    if str(ex_dir) in folder_name:
+                        print("Rec Skipping files in ", folder_name)
+                        return []
+                else:
+                    if str(folder_name).endswith(ex_dir):
+                        print("Skipping files in ", folder_name)
+                        return []
 
         print('Now in ', folder_name)
         # all_file_list = [
@@ -94,21 +94,19 @@ class File_Crawler:
                     if os.path.isfile(os.path.join(folder_name, x[0][file_name])):
                         file_list.append(os.path.join(folder_name, x[0][file_name]))
 
-        # Todo: test what is returned
         # return sorted
         return sorted(file_list)
 
-    def get_files(self, file_dir: str, exclude_dirs: dict = None, recursive_crawl_flag: bool = False) -> list:
+    def get_files(self, file_dir: str, exclude_dirs: dict = None, recursive_crawl_flag: bool = False) -> list[str]:
         """
         :param file_dir: str: Absolute path of Directory to crawl
         :param recursive_crawl_flag: bool: If True, then crawls the directory recursively
 
         :param exclude_dirs: dict:
-                A dict of type {'dir_name': 'recursive_exclude_flag'} (where dir_name is relative)
-                if recursive_exclude_flag is True, it will skip all sub-dirs of 'dir_name' including files in 'dir_name'
+                A dict of type {'dir_name': 'exclude_sub_dir'} (where dir_name is relative)
+                if exclude_sub_dir is True, it will skip all sub-dirs of 'dir_name' including files in 'dir_name'
                 otherwise it will skip files only in 'dir_name' but will search for files in its sub-dirs.
-        :return: list: List of files in the file_dir,
-                stores a tuple = (absolute path of file's folder : str, name of file : str, downloaded: bool)
+        :return: list[str]: List of absolute path to files in the file_dir
         """
 
         self._exclude_dirs: dict = exclude_dirs

@@ -2,7 +2,6 @@ import base64
 import json
 import logging
 import os
-import re
 import traceback
 
 import requests
@@ -83,8 +82,16 @@ class API:
                 'api_version': '4',
                 '_format': 'json',
                 '_marker': '0',
-            }
+            },
 
+            "lyrics": {
+                '__call': 'lyrics.getLyrics',
+                'lyrics_id': 'jZjE_NfL',  # Need to find how this ID is generated
+                'ctx': 'web6dot0',
+                'api_version': 4,
+                '_format': 'json',
+                '_marker': '0'
+            }
         }
 
         self._headers: dict = {
@@ -109,13 +116,16 @@ class API:
 
         self._data = data[0]
 
-    def fetch_details(self, url) -> dict:
+    def _fetch_lyrics(self) -> None:
+        pass
+
+    def fetch_details(self, url: str) -> dict:
         """ Returns the details of song/playlist/album in a dict.
         :param url: str: url of song/playlist/album etc.
         :return: dict: contains "songs" as key and a list as value. The list contain details of each song
         """
 
-        re.sub(r'\?autoplay=enabled', '', url)
+        url = url.replace(r'\?autoplay=enabled', '')
         url_type: str = url.split('/')[3]  # song, album, artist etc
 
         id_of_url_type: str = str(url).split('/')[-1]

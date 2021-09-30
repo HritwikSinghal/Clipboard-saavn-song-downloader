@@ -8,7 +8,7 @@ import urllib.request
 
 from mutagen.mp4 import *
 
-from . import general_tools as tools
+from .toolbox import GeneralTools
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -16,6 +16,7 @@ test_bit = os.environ.get('DEBUG', default='0')
 
 
 class Tagger:
+    # Todo: add support for multiple file types
     """
     File should be m4a
 
@@ -50,79 +51,26 @@ class Tagger:
     """
 
     def __init__(self, file_location: str, keys: dict):
-        self._keys = keys
+        self._keys: dict = keys
         self._file_location: str = file_location
 
     # -------------------------------------------------------- #
 
-    def get_keys(self):
+    def get_keys(self) -> dict:
         return self._keys
 
-    def set_keys(self, keys: dict):
+    def set_keys(self, keys: dict) -> None:
         self._keys = keys
 
-    def get_file_location(self):
+    def get_file_location(self) -> str:
         return self._file_location
 
-    def set_file_location(self, file_location: str):
+    def set_file_location(self, file_location: str) -> None:
         self._file_location = file_location
 
     # -------------------------------------------------------- #
 
-    def fix_title(self):
-        # Fix title
-        new_title = self._keys['title'].replace('&quot;', '#')
-        if new_title != self._keys['title']:
-            self._keys['title'] = new_title
-            self._keys['title'] = tools.removeGibberish(self._keys['title'])
-
-            x = re.compile(r'''
-                                    (
-                                    [(\[]
-                                    .*          # 'featured in' or 'from' or any other shit in quotes
-                                    \#(.*)\#      # album name
-                                    [)\]]
-                                    )
-                                    ''', re.VERBOSE)
-
-            album_name = x.findall(self._keys['title'])
-            self._keys['title'] = self._keys['title'].replace(album_name[0][0], '').strip()
-
-            self._keys['album'] = album_name[0][1]
-
-            # old method, if above wont work, this will work 9/10 times.
-            # json_data = re.sub(r'.\(\b.*?"\)', "", str(info.text))
-            # json_data = re.sub(r'.\[\b.*?"\]', "", json_data)
-            # actual_album = ''
-        self._keys['title'] = tools.removeGibberish(self._keys['title'])
-        return self._keys['title']
-
-    # todo: remove tools dependency, create a new class for it and import it wherever needed
-    def fix(self):
-        oldArtist = self._keys["primary_artists"].replace('&#039;', '')
-        newArtist = tools.removeGibberish(oldArtist)
-        newArtist = tools.divideBySColon(newArtist)
-        newArtist = tools.removeTrailingExtras(newArtist)
-        self._keys['primary_artists'] = tools.removeDup(newArtist)
-
-        self._keys["singers"] = self._keys['primary_artists']
-
-        old_composer = self._keys["music"]
-        new_composer = tools.removeGibberish(old_composer)
-        new_composer = tools.divideBySColon(new_composer)
-        new_composer = tools.removeTrailingExtras(new_composer)
-        self._keys["music"] = tools.removeDup(new_composer)
-
-        self._keys['image_url'] = self._keys['image_url'].replace('-150x150.jpg', '-500x500.jpg')
-
-        self.fix_title()
-
-        self._keys["album"] = tools.removeGibberish(self._keys["album"]).strip()
-        self._keys["album"] = self._keys["album"] + ' (' + self._keys['year'] + ')'
-
-        _LOGGER.debug(json.dumps(self._keys, indent=2))
-
-    def convert_saavn_keys(self):
+    def convert_saavn_keys(self) -> None:
         """
         converts keys from saavn format to the one used by this module
         :return: none
@@ -142,20 +90,76 @@ class Tagger:
         self._keys['encrypted_media_url'] = self._keys['more_info']['encrypted_media_url']
         self._keys["duration"] = self._keys["more_info"]["duration"]
 
-    def add_tags(self):
-        # todo: update lyrics function in saavnApi
+    def fix_title(self, title: str) -> tuple:
+        my_toolbox = GeneralTools()
 
-        print('Adding Tags.....')
+        new_title = title[:]
+        album = ''
+        new_title = new_title.replace('&quot;', '#')
 
-        self.fix()
+        if new_title != title:
+            new_title = my_toolbox.remove_gibberish(new_title)
+
+            x = re.compile(r'''
+                                    (
+                                    [(\[]
+                                    .*          # 'featured in' or 'from' or any other shit in quotes
+                                    \#(.*)\#      # album name
+                                    [)\]]
+                                    )
+                                    ''', re.VERBOSE)
+
+            album_name = x.findall(new_title)
+            new_title = new_title.replace(album_name[0][0], '').strip()
+
+            album = album_name[0][1]
+
+            # old method, if above wont work, this will work 9/10 times.
+            # json_data = re.sub(r'.\(\b.*?"\)', "", str(info.text))
+            # json_data = re.sub(r'.\[\b.*?"\]', "", json_data)
+            # actual_album = ''
+
+        new_title = my_toolbox.remove_gibberish(new_title)
+        return new_title, album
+
+    def fix(self) -> None:
+        my_toolbox = GeneralTools()
+
+        oldArtist = self._keys["primary_artists"].replace('&#039;', '')
+        newArtist = my_toolbox.remove_gibberish(oldArtist)
+        newArtist = my_toolbox.divide_artists(newArtist)
+        newArtist = my_toolbox.remove_trailing_extras(newArtist)
+        self._keys['primary_artists'] = my_toolbox.remove_duplicates(newArtist)
+
+        self._keys["singers"] = self._keys['primary_artists']
+
+        old_composer = self._keys["music"]
+        new_composer = my_toolbox.remove_gibberish(old_composer)
+        new_composer = my_toolbox.divide_artists(new_composer)
+        new_composer = my_toolbox.remove_trailing_extras(new_composer)
+        self._keys["music"] = my_toolbox.remove_duplicates(new_composer)
+
+        self._keys['image_url'] = self._keys['image_url'].replace('-150x150.jpg', '-500x500.jpg')
+
+        self._keys['title'], new_album = self.fix_title(self._keys['title'])
+
+        if new_album != '':
+            self._keys['album'] = new_album
+        self._keys["album"] = my_toolbox.remove_gibberish(self._keys["album"]).strip()
+        self._keys["album"] = self._keys["album"] + ' (' + self._keys['year'] + ')'
+
+        _LOGGER.debug(json.dumps(self._keys, indent=2))
+
+    def _add_tags(self) -> None:
         audio = MP4(self.get_file_location())
 
         audio['\xa9nam'] = html.unescape(str(self._keys['title']))
         audio['\xa9ART'] = html.unescape(str(self._keys['primary_artists']))
         audio['\xa9alb'] = html.unescape(str(self._keys['album']))
-        # audio['aART'] = html.unescape(str(self._keys['singers']))                # Album Artist
 
+        # audio['aART'] = html.unescape(str(self._keys['singers']))                # Album Artist
         # use ‘\xa9lyr’ for lyrics
+
         audio['\xa9wrt'] = html.unescape(str(self._keys['music']))
         audio['desc'] = html.unescape(str(self._keys['starring']))
         audio['\xa9gen'] = html.unescape(str(self._keys['label']))
@@ -165,7 +169,14 @@ class Tagger:
         fd = urllib.request.urlopen(cover_url)
         cover = MP4Cover(fd.read(), getattr(MP4Cover, 'FORMAT_PNG' if cover_url.endswith('png') else 'FORMAT_JPEG'))
         fd.close()
+
         audio['covr'] = [cover]
 
         audio.save()
+
+    def add_tags(self) -> None:
+        self.fix()
+
+        print('Adding Tags.....')
+        self._add_tags()
         print("Tags Added Successfully\n")
