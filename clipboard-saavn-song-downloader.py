@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger()
 _LOGGER.setLevel(logging.DEBUG)
 
 _FORMATTER = logging.Formatter(
-    '%(asctime)s : [%(levelname)s] :  %(name)s : (%(filename)s).%(funcName)s(%(lineno)d) : %(message)s'
+    '[%(levelname)s] : %(asctime)s : %(name)s : (%(filename)s).%(funcName)s(%(lineno)d) : %(message)s'
 )
 
 # Print all Log messages to file for debugging
@@ -54,7 +54,7 @@ def down_from_file(download_dir: str, old_file_name: str) -> None:
 
             print(f'Song download from {old_file_name} complete, renaming file and moving to clipboard download...')
     else:
-        _LOGGER.warning(f"No file named '{old_file_name}' found.")
+        _LOGGER.warning(f"No file named '{old_file_name}'.")
 
 
 def start():
