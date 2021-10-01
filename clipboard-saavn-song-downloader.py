@@ -3,9 +3,8 @@ import logging
 import os
 import traceback
 
-if os.path.isfile('test_bit'):
-    os.environ["DEBUG"] = "1"
-
+# noinspection PyUnresolvedReferences
+import set_debug
 from src.saavn_downloader import SaavnDownloader
 
 # --------------------------------------------------------------------------------------------------- #
@@ -36,9 +35,11 @@ _LOGGER.addHandler(_STREAM_HANDLER)
 test_bit = int(os.environ.get('DEBUG', default='0'))
 
 
-def down_from_file(download_dir: str, file_name: str) -> None:
+def down_from_file(download_dir: str, old_file_name: str) -> None:
+    file_name = os.path.expanduser(old_file_name)
     if os.path.isfile(file_name):
         print(f'Found {file_name}, downloading songs from it first....')
+
         with open(file_name, 'r+') as song_file:
             song_url_list = [str(x).strip() for x in song_file.readlines() if str(x).strip()]
             my_downloader = SaavnDownloader(download_dir)
@@ -51,10 +52,12 @@ def down_from_file(download_dir: str, file_name: str) -> None:
                     _LOGGER.warning(traceback.format_exc())
                     continue
 
-            print('Song download from file complete, renaming file and moving to clipboard download...')
+            print(f'Song download from {old_file_name} complete, renaming file and moving to clipboard download...')
+    else:
+        _LOGGER.warning(f"No file named '{old_file_name}' found.")
 
 
-def start(test=0):
+def start():
     # Check for download dir
     download_dir = os.path.expanduser("~/Downloads/Music")
     if not os.path.isdir(download_dir):
