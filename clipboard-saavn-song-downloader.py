@@ -1,6 +1,6 @@
+import argparse
 import logging
 import os
-import random
 import traceback
 
 if os.path.isfile('test_bit'):
@@ -36,10 +36,10 @@ _LOGGER.addHandler(_STREAM_HANDLER)
 test_bit = int(os.environ.get('DEBUG', default='0'))
 
 
-def down_from_file(download_dir):
-    if os.path.isfile("songs_list.txt"):
-        print('Found "songs_list.txt", downloading songs from it first... ')
-        with open('songs_list.txt', 'r+') as song_file:
+def down_from_file(download_dir: str, file_name: str) -> None:
+    if os.path.isfile(file_name):
+        print(f'Found {file_name}, downloading songs from it first....')
+        with open(file_name, 'r+') as song_file:
             song_url_list = [str(x).strip() for x in song_file.readlines() if str(x).strip()]
             my_downloader = SaavnDownloader(download_dir)
 
@@ -53,23 +53,24 @@ def down_from_file(download_dir):
 
             print('Song download from file complete, renaming file and moving to clipboard download...')
 
-        os.rename('songs_list.txt', 'songs_list_DONE_' + str(random.randint(1, 100000)) + '.txt')
-
 
 def start(test=0):
-    # https://stackoverflow.com/questions/23255186/download-under-users-profile-directory
-    # download_dir = os.path.expandvars('%userprofile%/Downloads/')  # where to put it
-
-    # https://stackoverflow.com/questions/4028904/how-to-get-the-home-directory-in-python
-
+    # Check for download dir
     download_dir = os.path.expanduser("~/Downloads/Music")
-
     if not os.path.isdir(download_dir):
         os.mkdir(download_dir)
     print("Songs will be Downloaded to: ", download_dir)
 
-    down_from_file(download_dir)
+    # Check if a file containing song links is provided
+    parser = argparse.ArgumentParser(description='File containing links')
+    parser.add_argument('-f', '--file', type=str, help="absolute path of File containing links", required=False)
+    args = parser.parse_args()
 
+    if args.file:
+        _LOGGER.info("Found Songs FIle = " + str(args.file))
+        down_from_file(download_dir, args.file)
+
+    # Proceed with usual
     try:
         while True:
             my_downloader = SaavnDownloader(download_dir)
