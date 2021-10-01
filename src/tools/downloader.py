@@ -5,7 +5,8 @@ import traceback
 from concurrent.futures.process import ProcessPoolExecutor
 
 import requests
-import youtube_dl
+# import youtube_dl
+import yt_dlp
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +35,8 @@ class FileDownloader:
 
     def download(self, data_list: list[tuple]) -> None:
         """
-        :param data_list: list[tuple]: a list of tuples. Each tuple contains (url: str, filename: str, download_file_path: str)
+        :param data_list: list[tuple]: a list of tuples.
+                            Each tuple contains (url: str, filename: str, filename: str, download_file_path: str)
         :return: None
         """
 
@@ -52,9 +54,7 @@ def _default_hook(d: dict) -> None:
 
 
 class YTDLDownloader:
-    """
-    Inputs url as str, Downloads the video/audio to download dir
-    """
+    """Input a list of urls and download them parallely in download dir."""
 
     def __init__(self, prefix='', save_dir: str = '', ydl_opts=None):
         self._prefix: str = prefix
@@ -86,7 +86,7 @@ class YTDLDownloader:
         return_list = []
 
         base_url = 'https://youtube.com/watch?v='
-        with youtube_dl.YoutubeDL(self._ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL(self._ydl_opts) as ydl:
             result = ydl.extract_info(playlist_url, download=False)
             if 'entries' in result:
                 # Can be a playlist or a list of videos
@@ -131,13 +131,17 @@ class YTDLDownloader:
     def _download(self, download_url) -> None:
         while True:
             try:
-                with youtube_dl.YoutubeDL(self._ydl_opts) as ydl:
+                with yt_dlp.YoutubeDL(self._ydl_opts) as ydl:
                     ydl.download([download_url])
             except:
                 time.sleep(15)
                 _LOGGER.debug(traceback.format_exc())
 
-    def download(self, download_url_list: list[str] = None) -> None:
+    def download(self, download_url_list: list[str], max_workers=4) -> None:
+        """Input a list of urls and download them parallely in download dir.
+        :param download_url_list: list[str] : list of urls
+        :return: None
+        """
         if not len(download_url_list) > 0:
             _LOGGER.error("Input list has length <= 0")
             return None
@@ -148,5 +152,5 @@ class YTDLDownloader:
         os.chdir(self._save_dir)
         print("Saving to ", self._save_dir)
 
-        with ProcessPoolExecutor(max_workers=4) as executor:
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
             executor.map(self._download, download_url_list)
