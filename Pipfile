@@ -12,6 +12,7 @@ pyperclip = "*"
 pytest = "*"
 pyDes = "*"
 youtube-dl = "*"
+yt-dlp = "*"
 
 [dev-packages]
 

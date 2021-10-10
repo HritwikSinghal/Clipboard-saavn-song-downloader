@@ -124,7 +124,7 @@ class YTDLDownloader:
         os.chdir(self._save_dir)
         with open('url_list.txt', 'w+') as myfile:
             for x in new_list:
-                myfile.writelines(x)
+                myfile.writelines(x + '\n')
 
         return new_list
 

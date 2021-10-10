@@ -4,7 +4,7 @@ import os
 import re
 import traceback
 
-import pyperclip
+from src import gpaste
 
 from src.tools import downloader, saavn_API
 from src.tools.saavn_API import SaavnUrlDecrypter
@@ -41,16 +41,17 @@ class SaavnDownloader:
     def __get_url(self) -> None:
         print('\nWaiting for url from clipboard....')
 
-        url = pyperclip.waitForPaste()
-        _LOGGER.debug(f"Got {url} from clipboard")
+        while not self.url:
+            url = gpaste.waitForPaste('temp_str')
+            _LOGGER.debug(f"Got {url} from clipboard")
 
-        pyperclip.copy('')
+            gpaste.copy('temp_str')
 
-        if str(url).startswith('https://www.jiosaavn.com'):
-            print('got url: ', url)
+            if str(url).startswith('https://www.jiosaavn.com'):
+                print('got url: ', url)
 
-            self.url = url
-            _LOGGER.debug("Got url = " + self.url)
+                self.url = url
+                _LOGGER.debug("Got url = " + self.url)
 
     def __download_song(self, title: str, file_name: str) -> None:
         """ Download the song.
@@ -89,12 +90,14 @@ class SaavnDownloader:
 
     def run(self) -> None:
         if test_bit:
-            self.url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
-        while not self.url:
+            # self.url = 'https://www.jiosaavn.com/song/shayad-from-love-aaj-kal/GjIBdCt,UX8'
+            pass
+        if not self.url:
             self.__get_url()
-        else:
-            url_type = self.url.split('/')[3]
-            _LOGGER.debug("url type = " + url_type)
+        return
+
+        url_type = self.url.split('/')[3]
+        _LOGGER.debug("url type = " + url_type)
 
         songs_json: dict = saavn_API.API().fetch_details(url=self.url)
         _LOGGER.debug(songs_json)

@@ -56,9 +56,9 @@ printf "\n\n ${grn} Upgrading requests ${end} "
 sudo pip3 install --upgrade requests
 pip3 install --upgrade requests
 
-printf "\n\n ${grn} Insatlling Xsel & Xclip & wl-clipboard ${end} "
-sudo apt install xsel xclip wl-clipboard -y
-sudo pacman -S xsel xclip wl-clipboard --noconfirm --needed
+printf "\n\n ${grn} Insatlling Xsel, Xclip, wl-clipboard, gpaste ${end} "
+sudo apt install xsel xclip wl-clipboard gpaste -y
+sudo pacman -S xsel xclip wl-clipboard gpaste --noconfirm --needed
 
 printf "\n ${grn} ------------------------------------------------- ${end} "
 cd ~/Clipboard-saavn-song-downloader/ || exit
