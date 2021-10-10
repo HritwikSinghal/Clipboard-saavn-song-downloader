@@ -38,6 +38,10 @@ echo -e "
 			－ Ｂｙ Ｈｒｉｔｗｉｋ Ｓｉｎｇｈａｌ
 "
 
+printf "\n\n ${grn} Installing git, python3 ${end} "
+sudo apt-get install git python3 -y
+sudo pacman -S git python3 --noconfirm --needed
+
 printf "\n\n ${grn} Cloning Repo ${end} "
 rm -rf ~/Clipboard-saavn-song-downloader/
 git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader/

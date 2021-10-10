@@ -7,11 +7,11 @@ Just run this program and copy Jiosaavn links (like ```https://www.jiosaavn.com/
 to your clipboard, and it will start downloading them.
 It will download 320 Kbps m4a of song and save it in ```$HOME/downloads/Music``` Directory.
 
-You can also create a file named ```songs_list.txt``` which contains list of urls separated by newline, 
+You can also create a file named ```songs_list.txt``` in home directory which contains list of urls separated by newline, 
 this program will download all the links from there first and then move to parsing URLs from clipboard.
 It will also rename the ```songs_list.txt``` file to ```songs_list_done_randomNumber.txt``` 
 to avoid re-downloading songs.
-The file ```songs_list.txt``` should be in the same folder as ```clipboard-saavn-song-downloader.py```.
+Use ```--help``` for more info.
 
 ## Screenshots
 
@@ -29,14 +29,13 @@ And more!
 
 ## Installation:
 
-#####  NOTE: There are two methods of Installation, ```Method 1``` and ```Method 2``` . **Windows users should follow only ```Method 2```**. While Linux Users can follow either ```Method 1``` or ```Method 2``` 
+### Method 1 (Easy Install, only for debian and arch based distros)
 
+Those who want to get started quickly and conveniently may install using the following command
 
-### Method 1 (Easy Install, ONLY FOR LINUX)
+* Install ```curl``` before installing.
 
-Those who want to get started quickly and conveniently may install using the following command (**Make sure curl is installed on your system.**)
-
-```$ curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
+* ```curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
 
 Now run ```saavn-downloader``` from terminal to lauch the program. (You can run this from any directory!)
 
