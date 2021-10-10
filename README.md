@@ -43,14 +43,9 @@ Now run ```saavn-downloader``` from terminal to lauch the program. (You can run 
 ### Method 2 (For Both Linux and Windows.)
 
 
-#### Clone this repository using
+#### Clone this repository and enter
 ```sh
 $ git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader
-```
-
-#### Enter the directory
-
-```sh
 $ cd Clipboard-saavn-song-downloader/
 ```
 
@@ -60,21 +55,34 @@ $ cd Clipboard-saavn-song-downloader/
 $ pip3 install -r requirements.txt
 ``` 
 
-1. Upgrade requests using ```sudo pip3 install --upgrade requests```
+* Upgrade requests using ```pip3 install --upgrade requests```
 
-2. install one of the copy/paste mechanisms:
+* install one of the copy/paste mechanisms:
 	
-	1. xclip utility
-	```
-	sudo apt install xclip			# For Debian based Distros
-	sudo pacman -S xclip --noconfirm			# For Arch based Distros
- 	```
+   For X11, xclip utility
+    ```
+    sudo apt install xclip			                    # For Debian based Distros
+    sudo pacman -S xclip --noconfirm --needed			# For Arch based Distros
+     ```
+   
+    For NON-GNOME Wayland (KDE, sway), Install wl-clipboard
+   ```
+    sudo apt install wl-clipboard			                    # For debian based Distros
+    sudo pacman -S wl-clipboard --noconfirm --needed			# For Arch based Distros
+    ```
+	
+    For GNOME-Wayland (ubuntu and others), install gpaste
+    ```
+    sudo apt install gpaste			                    # For debian based Distros
+    sudo pacman -S gpaste --noconfirm --needed			# For Arch based Distros
+    ```
 
-    2. xsel utility.
-	```
-	sudo apt install xsel			# For debian based Distros
-	sudo pacman -S xsel --noconfirm			# For Arch based Distros
-	```
+   Totally Optional xsel utility. 
+    ```
+    sudo apt install xsel			                    # For debian based Distros
+    sudo pacman -S xsel --noconfirm --needed			# For Arch based Distros
+    ```
+ 
 
 ### Running the app
 

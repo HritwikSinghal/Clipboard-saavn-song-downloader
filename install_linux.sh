@@ -41,6 +41,7 @@ echo -e "
 printf "\n\n ${grn} Installing git, python3 ${end} "
 sudo apt-get install git python3 -y
 sudo pacman -S git python3 --noconfirm --needed
+python3 -m keyring --disable
 
 printf "\n\n ${grn} Cloning Repo ${end} "
 rm -rf ~/Clipboard-saavn-song-downloader/
