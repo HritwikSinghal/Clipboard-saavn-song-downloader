@@ -86,7 +86,7 @@ def waitForPaste(not_str: str, timeout=None):
 
 def set_clipboard():
     global copy, paste
-    if os.getenv('XDG_CURRENT_DESKTOP') == 'GNOME' and os.getenv('XDG_SESSION_TYPE') == 'wayland':
+    if 'gnome' in os.getenv('XDG_CURRENT_DESKTOP').lower() and os.getenv('XDG_SESSION_TYPE') == 'wayland':
         copy = copy_gpaste
         paste = paste_gpaste
 
