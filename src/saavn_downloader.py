@@ -94,7 +94,6 @@ class SaavnDownloader:
             pass
         if not self.url:
             self.__get_url()
-        return
 
         url_type = self.url.split('/')[3]
         _LOGGER.debug("url type = " + url_type)
