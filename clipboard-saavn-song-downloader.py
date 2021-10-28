@@ -126,7 +126,7 @@ if __name__ == '__main__':
         try:
             start()
         except KeyboardInterrupt:
-            pass
+            _LOGGER.debug(f"Keyboard Interrupt, {traceback.format_exc()}")
 
 
         print("""
