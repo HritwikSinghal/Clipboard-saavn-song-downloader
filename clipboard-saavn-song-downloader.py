@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import logging
 import os
@@ -32,7 +34,7 @@ _LOGGER.addHandler(_STREAM_HANDLER)
 
 # --------------------------------------------------------------------------------------------------- #
 
-test_bit = int(os.environ.get('DEBUG', default='0'))
+test_bit = int(os.environ.get('DEBUG', default=0))
 
 
 def down_from_file(download_dir: str, old_file_name: str) -> None:
@@ -82,7 +84,7 @@ def start():
     except Exception as e:
         _LOGGER.error(traceback.format_exc())
         print("\nExiting....")
-        exit(0)
+        # exit(0)
 
 
 if __name__ == '__main__':
