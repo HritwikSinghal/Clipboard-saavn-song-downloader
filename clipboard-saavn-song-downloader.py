@@ -121,7 +121,13 @@ if __name__ == '__main__':
         """)
 
         print("Starting Program....")
-        start()
+
+        # see https://stackoverflow.com/questions/7073268/remove-traceback-in-python-on-ctrl-c
+        try:
+            start()
+        except KeyboardInterrupt:
+            pass
+
 
         print("""
                 If there were errors while running this program, Please open an issue on github
