@@ -30,6 +30,7 @@ webencodings = "==0.5.1"
 websockets = "==10.0"
 youtube_dl = "==2021.6.6"
 pipfile = "*"
+tqdm = "*"
 
 [dev-packages]
 

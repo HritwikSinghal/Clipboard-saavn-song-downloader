@@ -7,6 +7,7 @@ from concurrent.futures.process import ProcessPoolExecutor
 import requests
 # import youtube_dl
 import yt_dlp
+from tqdm import tqdm
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ test_bit = int(os.environ.get('DEBUG', default='0'))
 class FileDownloader:
     def __init__(self):
         self.headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
             'referer': 'https://www.jiosaavn.com/song/tere-naal/KD8zfAZpZFo',
             'origin': 'https://www.jiosaavn.com'
         }
@@ -25,11 +26,18 @@ class FileDownloader:
         url, filename, file_path = data
 
         print(f"Downloading '{filename}'.....")
+        # Streaming, so we can iterate over the response.
         raw_data = requests.get(url, stream=True, headers=self.headers)
+
+        # to get file size, we use 'Content-Length' in headers
+        content_length = int(raw_data.headers['Content-length'])
+        progress_bar = tqdm(total=content_length, unit='iB', unit_scale=True)
         with open(file_path, "wb") as raw_file:
             for chunk in raw_data.iter_content(chunk_size=2048):
+                progress_bar.update(len(chunk))
                 if chunk:
                     raw_file.write(chunk)
+        progress_bar.close()
 
         print(f"'{filename}' Downloaded successfully")
 
