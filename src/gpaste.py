@@ -1,6 +1,6 @@
+import ctypes
 import os
 import subprocess
-import ctypes
 import time
 
 import pyperclip
@@ -58,8 +58,15 @@ def copy_gpaste(text):
 def paste_gpaste():
     args = ["gpaste-client history --raw & exit"]
     result = subprocess.run(args, capture_output=True, text=True, shell=True)
-    last_item_in_history = [str(x).strip() for x in (result.stdout).splitlines()][0]
-    return last_item_in_history
+    while True:
+        try:
+            last_item_in_history = [str(x).strip() for x in result.stdout.splitlines()][0]
+        except IndexError:
+            pyperclip.copy("temp_str")
+            # if the clipboard history is empty
+            continue
+        else:
+            return last_item_in_history
 
 
 # ------------------------------------------------------------------------------------------- #
