@@ -83,8 +83,7 @@ def start():
 
     except Exception as e:
         _LOGGER.error(traceback.format_exc())
-        print("\nExiting....")
-        # exit(0)
+        exit("\nExiting....")
 
 
 if __name__ == '__main__':
@@ -150,6 +149,7 @@ if __name__ == '__main__':
         """)
         _LOGGER.info('Logging End')
 
+# todo: make this asynchronous
 # Todo : fix gnome wayland bug
 # todo: add colored text : https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
 # todo: fix artists and add support for Podcasts (shows)
