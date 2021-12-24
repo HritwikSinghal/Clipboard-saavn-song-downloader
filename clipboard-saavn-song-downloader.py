@@ -103,14 +103,16 @@ if __name__ == '__main__':
 
     args = cmd_parser()
     if args.version:
-        with open(pathlib.Path("version")) as file:
+        # todo:  maybe remove this hardcoded path
+        version_path = pathlib.Path.home() / "Clipboard-saavn-song-downloader" / "version"
+        with open(version_path) as file:
             print(file.read())
         exit()
 
-    if test_bit == 1:
-        _LOGGER.info('DEBUG mode ON')
+        if test_bit == 1:
+            _LOGGER.info('DEBUG mode ON')
         start(args=args)
-    else:
+        else:
         _LOGGER.info('DEBUG mode OFF')
         print("""\n
     
