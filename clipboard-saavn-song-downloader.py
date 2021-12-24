@@ -3,7 +3,9 @@
 import argparse
 import logging
 import os
+import pathlib
 import traceback
+import click
 
 # noinspection PyUnresolvedReferences
 import set_debug
@@ -38,6 +40,14 @@ _LOGGER.addHandler(_STREAM_HANDLER)
 test_bit = int(os.environ.get('DEBUG', default=0))
 
 
+def cmd_parser():
+    parser = argparse.ArgumentParser(description='File containing links')
+    parser.add_argument('-f', '--file', type=str, help="absolute path of File containing links", required=False)
+    parser.add_argument('-v', '--version', help="Program Version", required=False, action="store_true")
+    args = parser.parse_args()
+    return args
+
+
 def down_from_file(download_dir: str, old_file_name: str) -> None:
     file_name = os.path.expanduser(old_file_name)
     if os.path.isfile(file_name):
@@ -60,7 +70,12 @@ def down_from_file(download_dir: str, old_file_name: str) -> None:
         _LOGGER.warning(f"No file named '{old_file_name}'.")
 
 
-def start():
+def start(args):
+    # Update check
+    _LOGGER.info('Checking for Updates')
+    print('Checking for Updates...')
+    Updater().update()
+
     # Check for download dir
     download_dir = os.path.expanduser("~/Downloads/Music")
     if not os.path.isdir(download_dir):
@@ -68,10 +83,6 @@ def start():
     print("Songs will be Downloaded to: ", download_dir)
 
     # Check if a file containing song links is provided
-    parser = argparse.ArgumentParser(description='File containing links')
-    parser.add_argument('-f', '--file', type=str, help="absolute path of File containing links", required=False)
-    args = parser.parse_args()
-
     if args.file:
         _LOGGER.info("Found Songs FIle = " + str(args.file))
         down_from_file(download_dir, args.file)
@@ -90,17 +101,17 @@ def start():
 if __name__ == '__main__':
     _LOGGER.info('Logging Started')
 
+    args = cmd_parser()
+    if args.version:
+        with open(pathlib.Path("version")) as file:
+            print(file.read())
+        exit()
+
     if test_bit == 1:
         _LOGGER.info('DEBUG mode ON')
-        Updater().update()
-        start()
+        start(args=args)
     else:
         _LOGGER.info('DEBUG mode OFF')
-
-        _LOGGER.info('Checking for Updates')
-        print('Checking for Updates...')
-        Updater().update()
-
         print("""\n
 
                 ░██████╗░█████╗░░█████╗░██╗░░░██╗███╗░░██╗  ░██████╗░█████╗░███╗░░██╗░██████╗░
@@ -130,7 +141,7 @@ if __name__ == '__main__':
 
         # see https://stackoverflow.com/questions/7073268/remove-traceback-in-python-on-ctrl-c
         try:
-            start()
+            start(args=args)
         except KeyboardInterrupt:
             _LOGGER.debug(f"Keyboard Interrupt, {traceback.format_exc()}")
 
