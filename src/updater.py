@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import time
+import traceback
 from pathlib import Path
 
 import requests
@@ -29,7 +30,7 @@ class Updater:
     def __set_curr_tag(self):
         # todo: remove this hardcode
         with open(Path.home() / 'Clipboard-saavn-song-downloader' / 'version', 'r') as file:
-            curr_tag = file.readlines()[0].strip()
+            curr_tag = json.load(file)['version']
         self.curr_tag = version.parse(curr_tag)
 
     def __get_latest_version(self):
@@ -74,5 +75,5 @@ class Updater:
                     time.sleep(0.5)
 
             except Exception as e:
-                _LOGGER.error(e)
+                _LOGGER.error(traceback.format_exc())
                 print("There was some error in checking for updates. See log file.")
