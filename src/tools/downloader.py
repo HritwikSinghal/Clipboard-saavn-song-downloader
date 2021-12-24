@@ -31,7 +31,7 @@ class FileDownloader:
 
         # to get file size, we use 'Content-Length' in headers
         content_length = int(raw_data.headers['Content-length'])
-        progress_bar = tqdm(total=content_length, unit='iB', unit_scale=True)
+        progress_bar = tqdm(total=content_length, unit='iB', unit_scale=True, leave=False)
         with open(file_path, "wb") as raw_file:
             for chunk in raw_data.iter_content(chunk_size=2048):
                 progress_bar.update(len(chunk))
