@@ -109,10 +109,10 @@ if __name__ == '__main__':
             print(file.read())
         exit()
 
-        if test_bit == 1:
-            _LOGGER.info('DEBUG mode ON')
+    if test_bit == 1:
+        _LOGGER.info('DEBUG mode ON')
         start(args=args)
-        else:
+    else:
         _LOGGER.info('DEBUG mode OFF')
         print("""\n
     
