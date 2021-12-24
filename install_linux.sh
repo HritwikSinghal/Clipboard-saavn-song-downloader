@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+trap "exit" INT
 red=$'\e[1;31m'
 grn=$'\e[1;32m'
 yel=$'\e[1;33m'
