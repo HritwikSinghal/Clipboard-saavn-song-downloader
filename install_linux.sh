@@ -81,7 +81,7 @@ cd ~/Clipboard-saavn-song-downloader/ || exit
 #echo "python3 ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py" >> ~/Clipboard-saavn-song-downloader/start_linux.sh
 sudo chmod +x ./clipboard-saavn-song-downloader.py || exit
 sudo chmod +x ./start_linux.sh || exit
-sudo ln -sf ~/Clipboard-saavn-song-downloader/start_linux.sh /usr/local/bin/saavn-downloader
+sudo ln -sf ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
 
 echo -e "
 
