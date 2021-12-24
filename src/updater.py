@@ -35,14 +35,20 @@ class Updater:
 
     def __get_latest_version(self):
         # this uses the file "version" to check latest tag.
-        latest_version_url = json.load(open('version'))['latest_version_url']
+        # todo: remove this hardcode
+        with open(Path.home() / 'Clipboard-saavn-song-downloader' / 'version', 'r') as file:
+            latest_version_url = json.load(file)['latest_version_url']
+
         response = requests.get(latest_version_url, allow_redirects=True)
         latest = json.loads(response.text)['version']
         self.latest_tag = version.parse(latest)
 
     def __get_latest_tag_github(self):
         # This uses the GitHub url to check latest tag
-        github_latest_tag_url = json.load(open("../version"))['latest_tag_url']
+        # todo: remove this hardcode
+        with open(Path.home() / 'Clipboard-saavn-song-downloader' / 'version', 'r') as file:
+            github_latest_tag_url = json.load(file)['latest_tag_url']
+
         response = requests.get(github_latest_tag_url, allow_redirects=True)
         latest = str(response.url).strip().split('/')[-1]
         self.latest_tag = version.parse(latest)
