@@ -12,6 +12,7 @@ import click
 import set_debug
 from src.saavn_downloader import SaavnDownloader
 from src.updater import Updater
+from src.tools.colors import bcolors
 
 # --------------------------------------------------------------------------------------------------- #
 # Dont use _LOGGER = logging.getLogger(__name__) in root module, it will not work.
@@ -105,6 +106,7 @@ if __name__ == '__main__':
 
     args = cmd_parser()
     if args.reset:
+        print(f"{bcolors.FAIL}Resetting Program...{bcolors.ENDC}")
         reset_command = "curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash"
         subprocess.run(reset_command, shell=True)
         exit("Program Reset Done")
