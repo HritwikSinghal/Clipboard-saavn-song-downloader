@@ -34,7 +34,7 @@ class Updater:
 
     def __get_latest_version(self):
         # this uses the file "version" to check latest tag.
-        latest_version_url = json.load(open("../version"))['latest_version_url']
+        latest_version_url = json.load(open('version'))['latest_version_url']
         response = requests.get(latest_version_url, allow_redirects=True)
         latest = json.loads(response.text)['version']
         self.latest_tag = version.parse(latest)
