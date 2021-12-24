@@ -30,7 +30,7 @@ class Updater:
     def __set_curr_tag(self):
         with open(Path.home() / 'Clipboard-saavn-song-downloader' / 'version', 'r') as file:
             curr_tag = file.readlines()[0].strip()
-        self.curr_tag = version.parse('2.1.0')
+        self.curr_tag = version.parse(curr_tag)
 
     def __get_latest_tag(self):
         response = requests.get(self.update_url, allow_redirects=True)
