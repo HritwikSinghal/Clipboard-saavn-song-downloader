@@ -54,7 +54,9 @@ class Updater:
         self.latest_tag = version.parse(latest)
 
     def __update(self):
-        update_command = json.load(open("../version"))['update_command']
+        # todo: remove this hardcode
+        with open(Path.home() / 'Clipboard-saavn-song-downloader' / 'version', 'r') as file:
+            update_command = json.load(file)['update_command']
         subprocess.run(update_command, shell=True)
 
     def update(self):
