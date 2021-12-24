@@ -104,9 +104,9 @@ if __name__ == '__main__':
     _LOGGER.info('Logging Started')
 
     args = cmd_parser()
-    if args.update:
-        update_command = "curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash"
-        subprocess.run(update_command, shell=True)
+    if args.reset:
+        reset_command = "curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash"
+        subprocess.run(reset_command, shell=True)
         exit("Program Reset Done")
 
     if args.version:
