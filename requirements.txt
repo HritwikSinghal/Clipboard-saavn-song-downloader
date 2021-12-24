@@ -11,11 +11,13 @@ beautifulsoup4==4.10.0
 bs4==0.0.1
 certifi==2021.5.30
 charset-normalizer==2.0.6
+click==8.0.3
 html5lib==1.1
 idna==3.2
 iniconfig==1.1.1
 mutagen==1.45.1
 packaging==21.3; python_version >= '3.6'
+pipfile==0.0.2
 pluggy==1.0.0
 py==1.10.0
 pycryptodome==3.10.4
@@ -27,6 +29,7 @@ requests==2.26.0
 six==1.16.0
 soupsieve==2.2.1
 toml==0.10.2
+tqdm==4.62.3
 urllib3==1.26.7
 webencodings==0.5.1
 websockets==10.0
