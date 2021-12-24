@@ -8,6 +8,7 @@ import traceback
 # noinspection PyUnresolvedReferences
 import set_debug
 from src.saavn_downloader import SaavnDownloader
+from src.updater import Updater
 
 # --------------------------------------------------------------------------------------------------- #
 # Dont use _LOGGER = logging.getLogger(__name__) in root module, it will not work.
@@ -91,9 +92,15 @@ if __name__ == '__main__':
 
     if test_bit == 1:
         _LOGGER.info('DEBUG mode ON')
-        start()
+        Updater().update()
+        # start()
     else:
         _LOGGER.info('DEBUG mode OFF')
+
+        _LOGGER.info('Checking for Updates')
+        print('Checking for Updates...')
+        Updater().update()
+
         print("""\n
 
                 ░██████╗░█████╗░░█████╗░██╗░░░██╗███╗░░██╗  ░██████╗░█████╗░███╗░░██╗░██████╗░
@@ -126,7 +133,6 @@ if __name__ == '__main__':
             start()
         except KeyboardInterrupt:
             _LOGGER.debug(f"Keyboard Interrupt, {traceback.format_exc()}")
-
 
         print("""
                 If there were errors while running this program, Please open an issue on github
