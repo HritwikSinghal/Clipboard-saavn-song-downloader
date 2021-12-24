@@ -47,7 +47,8 @@ class Updater:
 
             if self.curr_tag < self.latest_tag:
                 _LOGGER.info(f"Found new version {self.latest_tag}, updating..")
-                print(f"{bcolors.OKBLUE}Found new version {self.latest_tag}, updating..{bcolors.ENDC}")
+                print(
+                    f"{bcolors.OKBLUE}Current version is {self.curr_tag}, Found new version {self.latest_tag}, updating..{bcolors.ENDC}")
                 self.__update()
             else:
                 _LOGGER.info("The current version is up to date")
