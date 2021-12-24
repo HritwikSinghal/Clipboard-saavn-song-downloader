@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import subprocess
@@ -22,31 +23,32 @@ class Updater:
     """
 
     def __init__(self):
-        self.update_command = "curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash"
-        self.github_latest_tag_url = "https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader/releases/latest"
-        self.latest_tag_url = "https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/version"
         self.curr_tag = 0.0
         self.latest_tag = 0.0
 
     def __set_curr_tag(self):
+        # todo: remove this hardcode
         with open(Path.home() / 'Clipboard-saavn-song-downloader' / 'version', 'r') as file:
             curr_tag = file.readlines()[0].strip()
         self.curr_tag = version.parse(curr_tag)
 
-    def __get_latest_tag(self):
+    def __get_latest_version(self):
         # this uses the file "version" to check latest tag.
-        response = requests.get(self.latest_tag_url, allow_redirects=True)
-        latest = str(response.text).strip()
+        latest_version_url = json.load(open("../version"))['latest_version_url']
+        response = requests.get(latest_version_url, allow_redirects=True)
+        latest = json.loads(response.text)['version']
         self.latest_tag = version.parse(latest)
 
     def __get_latest_tag_github(self):
-        # This uses the github url to check latest tag
-        response = requests.get(self.github_latest_tag_url, allow_redirects=True)
+        # This uses the GitHub url to check latest tag
+        github_latest_tag_url = json.load(open("../version"))['latest_tag_url']
+        response = requests.get(github_latest_tag_url, allow_redirects=True)
         latest = str(response.url).strip().split('/')[-1]
         self.latest_tag = version.parse(latest)
 
     def __update(self):
-        subprocess.run(self.update_command, shell=True)
+        update_command = json.load(open("../version"))['update_command']
+        subprocess.run(update_command, shell=True)
 
     def update(self):
 
@@ -58,7 +60,7 @@ class Updater:
             try:
                 self.__set_curr_tag()
                 # self.__get_latest_tag_github()
-                self.__get_latest_tag()
+                self.__get_latest_version()
 
                 if self.curr_tag < self.latest_tag:
                     _LOGGER.info(f"Found new version {self.latest_tag}, updating..")
