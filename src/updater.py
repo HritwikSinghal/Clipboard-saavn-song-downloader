@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import time
 from pathlib import Path
 
 import requests
@@ -51,6 +52,7 @@ class Updater:
             else:
                 _LOGGER.info("The current version is up to date")
                 print(f"{bcolors.OKGREEN}The current version is up to date.{bcolors.ENDC}")
+                time.sleep(1)
 
         except Exception as e:
             _LOGGER.error(e)
