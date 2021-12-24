@@ -27,7 +27,7 @@ class Updater:
         self.latest_tag = 0.0
 
     def __set_curr_tag(self):
-        with open(Path.cwd() / 'version', 'r') as file:
+        with open(Path.home() / 'Clipboard-saavn-song-downloader' / 'version', 'r') as file:
             curr_tag = file.readlines()[0].strip()
         self.curr_tag = version.parse('2.1.0')
 

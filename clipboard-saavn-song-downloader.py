@@ -93,7 +93,7 @@ if __name__ == '__main__':
     if test_bit == 1:
         _LOGGER.info('DEBUG mode ON')
         Updater().update()
-        # start()
+        start()
     else:
         _LOGGER.info('DEBUG mode OFF')
 
