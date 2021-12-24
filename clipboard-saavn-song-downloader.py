@@ -177,6 +177,8 @@ if __name__ == '__main__':
         """)
         _LOGGER.info('Logging End')
 
+# todo : log is saved in ~ instead of project dir
+# todo : fix hardcoded paths and try to find a soln for working with paths in this project
 # todo: use loguru
 # todo: make this asynchronous
 # Todo : fix gnome wayland bug

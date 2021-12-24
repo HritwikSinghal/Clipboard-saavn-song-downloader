@@ -93,12 +93,16 @@ def waitForPaste(not_str: str, timeout=None):
 
 def set_clipboard():
     global copy, paste
-    if 'gnome' in os.getenv('XDG_CURRENT_DESKTOP').lower() and os.getenv('XDG_SESSION_TYPE') == 'wayland':
-        copy = copy_gpaste
-        paste = paste_gpaste
+    try:
+        if 'gnome' in os.getenv('XDG_CURRENT_DESKTOP').lower() and os.getenv('XDG_SESSION_TYPE') == 'wayland':
+            copy = copy_gpaste
+            paste = paste_gpaste
 
-        start_client_gpaste()
-    else:
+            start_client_gpaste()
+        else:
+            copy = pyperclip.copy
+            paste = pyperclip.paste
+    except AttributeError:
         copy = pyperclip.copy
         paste = pyperclip.paste
 
