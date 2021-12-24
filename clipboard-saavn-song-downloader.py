@@ -4,6 +4,7 @@ import argparse
 import logging
 import os
 import pathlib
+import subprocess
 import traceback
 import click
 
@@ -44,6 +45,7 @@ def cmd_parser():
     parser = argparse.ArgumentParser(description='File containing links')
     parser.add_argument('-f', '--file', type=str, help="absolute path of File containing links", required=False)
     parser.add_argument('-v', '--version', help="Program Version", required=False, action="store_true")
+    parser.add_argument('-r', '--reset', help="Reset and reinstall the program", required=False, action="store_true")
     args = parser.parse_args()
     return args
 
@@ -102,6 +104,11 @@ if __name__ == '__main__':
     _LOGGER.info('Logging Started')
 
     args = cmd_parser()
+    if args.update:
+        update_command = "curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash"
+        subprocess.run(update_command, shell=True)
+        exit("Program Reset Done")
+
     if args.version:
         # todo:  maybe remove this hardcoded path
         version_path = pathlib.Path.home() / "Clipboard-saavn-song-downloader" / "version"
