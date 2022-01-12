@@ -105,14 +105,14 @@ class SaavnDownloader:
             songs_json: dict = saavn_API.API().fetch_details(url=self.url)
             _LOGGER.debug(songs_json)
 
-            print('Hi, this type of playlist download support is currently partially enabled.')
-            print("To download songs from current playlist, kindly copy below URL's and paste them in a file")
-            print("and run the program using '--file' option and provide that file path.")
-
             print("\n")
             for song_info in songs_json[self.all_types[url_type]]:
                 print(song_info['perma_url'])
             print("\n")
+
+            print('Hi, this type of playlist download support is currently partially enabled.')
+            print("To download songs from current playlist, kindly copy above URL's and paste them in a file")
+            print("and run the program using '--file' option and provide that file path.")
 
             exit(0)
 
