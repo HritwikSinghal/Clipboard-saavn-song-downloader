@@ -29,7 +29,8 @@ class SaavnDownloader:
             'song': 'songs',
             'album': 'list',
             'artist': 'topSongs',
-            'featured': 'list'
+            'featured': 'list',
+            'playlist': 'songs',
         }
         self.url: str = ''
 
@@ -95,7 +96,26 @@ class SaavnDownloader:
         if not self.url:
             self.__get_url()
 
-        url_type = self.url.split('/')[3]
+        self.url = self.url.replace(r'\?autoplay=enabled', '')
+        url_type: str = self.url.split('/')[3]  # song, album, artist etc
+        if url_type == 's':
+            url_type = self.url.split('/')[4]  # playlist
+            _LOGGER.debug("url type = " + url_type)
+
+            songs_json: dict = saavn_API.API().fetch_details(url=self.url)
+            _LOGGER.debug(songs_json)
+
+            print('Hi, this type of playlist download support is currently partially enabled.')
+            print("To download songs from current playlist, kindly copy below URL's and paste them in a file")
+            print("and run the program using '--file' option and provide that file path.")
+
+            print("\n")
+            for song_info in songs_json[self.all_types[url_type]]:
+                print(song_info['perma_url'])
+            print("\n")
+
+            exit(0)
+
         _LOGGER.debug("url type = " + url_type)
 
         songs_json: dict = saavn_API.API().fetch_details(url=self.url)

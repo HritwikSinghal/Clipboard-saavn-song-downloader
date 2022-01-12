@@ -22,9 +22,9 @@ class API:
         # To create a post request with payload as a dict, requests.get(url, data=payload)
         # payload = {"a" : 1, "b" : 2}
 
-        self._base_api_url = 'https://www.jiosaavn.com/api.php'
+        self._api_url = 'https://www.jiosaavn.com/api.php'
 
-        self._payloads: dict = {
+        self._token_payload: dict = {
             "song": {
                 '__call': 'webapi.get',
                 'token': '',
@@ -91,7 +91,27 @@ class API:
                 'api_version': 4,
                 '_format': 'json',
                 '_marker': '0'
-            }
+            },
+
+            "playlist": {
+                '__call': 'webapi.get',
+                'token': '',
+                'type': 'playlist',
+                'includeMetaTags': '0',
+                'ctx': 'web6dot0',
+                'api_version': '4',
+                '_format': 'json',
+                '_marker': '0',
+            },
+
+        }
+
+        self._payload = {
+            "playlist": {
+                '__call': 'playlist.getDetails',
+                '_format': 'json',
+                'listid': int,
+            },
         }
 
         self._headers: dict = {
@@ -102,7 +122,7 @@ class API:
 
         self._data: str = ''
 
-    def _fix_content(self) -> None:
+    def _fix_content(self, data: str) -> None:
         """Fixes the response returned by API if the response contains additional HTML tags."""
         # old
         # data = re.sub(r'<!DOCTYPE html>\s*<.*>?', '', data)
@@ -110,7 +130,7 @@ class API:
 
         # this is fixed_json
         data = [
-            x for x in self._data.splitlines()
+            x for x in data.splitlines()
             if x.strip().startswith('{')
         ]
 
@@ -118,6 +138,9 @@ class API:
 
     def _fetch_lyrics(self) -> None:
         pass
+
+    def _get_id(self) -> str:
+        return ''
 
     def fetch_details(self, url: str) -> dict:
         """ Returns the details of song/playlist/album in a dict.
@@ -127,14 +150,24 @@ class API:
 
         url = url.replace(r'\?autoplay=enabled', '')
         url_type: str = url.split('/')[3]  # song, album, artist etc
+        if url_type == 's':
+            url_type = url.split('/')[4]  # playlist
 
-        id_of_url_type: str = str(url).split('/')[-1]
+        token: str = str(url).split('/')[-1]
 
-        payload: dict = self._payloads[url_type]
-        payload['token'] = id_of_url_type
+        if url_type == 'playlist':
+            payload: dict = self._token_payload[url_type]
+            payload['token'] = token
+            id: int = requests.get(self._api_url, params=payload, headers=self._headers, allow_redirects=True).json()[
+                'id']
 
-        res = requests.get(self._base_api_url, headers=self._headers, params=payload, allow_redirects=True)
+            payload: dict = self._payload[url_type]
+            payload['listid'] = int(id)
+        else:
+            payload: dict = self._token_payload[url_type]
+            payload['token'] = token
 
+        res = requests.get(self._api_url, params=payload, headers=self._headers, allow_redirects=True)
         data: str = str(res.text).strip()
 
         try:
@@ -145,7 +178,7 @@ class API:
             _LOGGER.warning("Some error in loading data returned by Saavn to json")
             _LOGGER.warning(traceback.format_exc())
 
-            self._fix_content()
+            self._fix_content(data)
             self._data: dict = json.loads(self._data)
 
         _LOGGER.debug("data = " + str(self._data))

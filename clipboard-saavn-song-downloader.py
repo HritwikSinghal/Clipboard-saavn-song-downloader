@@ -64,7 +64,7 @@ def down_from_file(download_dir: str, old_file_name: str) -> None:
                 try:
                     my_downloader.url = song_url
                     my_downloader.run()
-                except:
+                except Exception as e:
                     _LOGGER.warning(traceback.format_exc())
                     continue
 
@@ -88,7 +88,10 @@ def start(args):
     # Check if a file containing song links is provided
     if args.file:
         _LOGGER.info("Found Songs FIle = " + str(args.file))
-        down_from_file(download_dir, args.file)
+        try:
+            down_from_file(download_dir, args.file)
+        except KeyboardInterrupt:
+            exit()
 
     # Proceed with usual
     try:
@@ -176,6 +179,8 @@ if __name__ == '__main__':
         ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝  ░░░╚═╝░░░░╚════╝░░╚═════╝░╚═╝
         """)
         _LOGGER.info('Logging End')
+
+# todo: see monuyadav impl of playlist and other downloads
 
 # todo : log is saved in ~ instead of project dir
 # todo : fix hardcoded paths and try to find a soln for working with paths in this project
