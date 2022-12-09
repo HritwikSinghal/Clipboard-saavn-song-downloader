@@ -5,18 +5,18 @@
 #    pipenv lock --requirements
 #
 
--i https://pypi.org/simple
+-i https://pypi.org/simple/
 attrs==21.2.0
 beautifulsoup4==4.10.0
 bs4==0.0.1
-certifi==2021.5.30
+certifi==2022.12.7
 charset-normalizer==2.0.6
 click==8.0.3
 html5lib==1.1
 idna==3.2
 iniconfig==1.1.1
 mutagen==1.45.1
-packaging==21.3; python_version >= '3.6'
+packaging==22.0; python_version >= '3.7'
 pipfile==0.0.2
 pluggy==1.0.0
 py==1.10.0
