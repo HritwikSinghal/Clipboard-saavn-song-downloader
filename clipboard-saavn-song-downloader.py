@@ -6,7 +6,7 @@ import os
 import pathlib
 import subprocess
 import traceback
-import click
+# import click
 
 # noinspection PyUnresolvedReferences
 import set_debug
