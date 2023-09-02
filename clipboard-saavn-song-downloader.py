@@ -82,7 +82,7 @@ def start(args):
     # Check for download dir
     download_dir = os.path.expanduser("~/Downloads/Music")
     if not os.path.isdir(download_dir):
-        os.mkdir(download_dir)
+        os.makedirs(download_dir)
     print("Songs will be Downloaded to: ", download_dir)
 
     # Check if a file containing song links is provided
