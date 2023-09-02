@@ -21,6 +21,9 @@ function has_command() {
   command -v $1 >/dev/null
 }
 
+export $USER=$SUDO_USER
+export $HOME=/home/$SUDO_USER
+
 echo -e "
 
 
@@ -64,14 +67,14 @@ if has_command apt; then
 elif has_command pacman; then
   pacman -S python-pip --noconfirm --needed
 fi
-
+#
 printf "\n\n ${grn} Installing Requirements ${end} "
-cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
-pip3 install -r ./requirements.txt
+#cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
+#pip3 install -r ./requirements.txt
 
-printf "\n\n ${grn} Upgrading requests ${end} "
-pip3 install --upgrade requests
-pip3 install --upgrade requests
+#printf "\n\n ${grn} Upgrading requests ${end} "
+#pip3 install --upgrade requests
+#pip3 install --upgrade requests
 
 printf "\n\n ${grn} Installing Xsel, Xclip, wl-clipboard, gpaste ${end} "
 if has_command apt; then
@@ -92,6 +95,7 @@ printf "\n ${grn} ------------------------------------------------- ${end} "
 cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
 chmod +x ./clipboard-saavn-song-downloader.py || exit
 echo "cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/" > /usr/local/bin/saavn-downloader
+echo "pipenv install" >> /usr/local/bin/saavn-downloader
 echo "pipenv run ./clipboard-saavn-song-downloader.py" >> /usr/local/bin/saavn-downloader
 chmod +x /usr/local/bin/saavn-downloader
 #ln -sf /home/$SUDO_USER/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
