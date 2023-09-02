@@ -84,10 +84,10 @@ printf "\n\n ${grn} Installing pyenv ${end} "
 if ! has_command pyenv; then
     if has_command apt; then
         curl https://pyenv.run | bash
-        export PYENV_ROOT="$HOME/.pyenv"
-        command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init -)"
-        eval "$(pyenv virtualenv-init -)"
+        echo 'export PYENV_ROOT="$HOME/.pyenv"' >> $HOME/.bashrc
+        echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> $HOME/.bashrc
+        echo 'eval "$(pyenv init -)"' >> $HOME/.bashrc
+        echo 'eval "$(pyenv virtualenv-init -)"' >> $HOME/.bashrc
     elif has_command pacman; then
       pacman -S pyenv --noconfirm --needed
     fi
