@@ -21,8 +21,12 @@ function has_command() {
   command -v $1 >/dev/null
 }
 
-export $USER=$SUDO_USER
-export $HOME=/home/$SUDO_USER
+# if running as root user then set current user as sudo user
+if [ "$EUID" -ne 0 ]
+then
+    export $USER=$SUDO_USER
+    export $HOME=USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+fi
 
 echo -e "
 
@@ -55,12 +59,12 @@ fi
 python3 -m keyring --disable
 
 printf "\n\n ${grn} Cloning Repo ${end} "
-cd /home/$SUDO_USER || exit
-rm -rf /home/$SUDO_USER/Clipboard-saavn-song-downloader/
-git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader /home/$SUDO_USER/Clipboard-saavn-song-downloader/
-cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
+cd $HOME || exit
+rm -rf $HOME/Clipboard-saavn-song-downloader/
+git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader $HOME/Clipboard-saavn-song-downloader/
+cd $HOME/Clipboard-saavn-song-downloader/ || exit
 rm -rf .git/ .gitignore
-chown -R $SUDO_USER:$SUDO_USER ./* .
+chown -R $USER:$USER ./* .
 
 printf "\n\n ${grn} Installing xclip, gpaste ${end} "
 if has_command apt; then
@@ -78,20 +82,26 @@ fi
 
 printf "\n\n ${grn} Installing pyenv ${end} "
 if has_command apt; then
-  export PATH="/home/$SUDO_USER/.pyenv/bin:$PATH" && eval "$(pyenv init --path)" && echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> /home/$SUDO_USER/.bashrc
+  export PATH="$HOME/.pyenv/bin:$PATH" && eval "$(pyenv init --path)" && echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> $HOME/.bashrc
+
+#    export PYENV_ROOT="$HOME/.pyenv"
+#    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+#    eval "$(pyenv init -)"
+#    eval "$(pyenv virtualenv-init -)"
+
   curl https://pyenv.run | bash
 elif has_command pacman; then
   pacman -S pyenv --noconfirm --needed
 fi
 
 printf "\n ${grn} ------------------------------------------------- ${end} "
-cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
+cd $HOME/Clipboard-saavn-song-downloader/ || exit
 chmod +x ./clipboard-saavn-song-downloader.py || exit
-echo "cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/" > /usr/local/bin/saavn-downloader
+echo "cd $HOME/Clipboard-saavn-song-downloader/" > /usr/local/bin/saavn-downloader
 echo "pipenv install" >> /usr/local/bin/saavn-downloader
 echo "pipenv run ./clipboard-saavn-song-downloader.py" >> /usr/local/bin/saavn-downloader
 chmod +x /usr/local/bin/saavn-downloader
-#ln -sf /home/$SUDO_USER/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
+#ln -sf $HOME/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
 
 echo -e "
 
