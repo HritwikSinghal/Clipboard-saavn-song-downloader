@@ -44,13 +44,14 @@ echo -e "
 
 "
 
-printf "\n\n ${grn} Installing git, python3, curl, pipenv ${end} "
+printf "\n\n ${grn} Installing git, python3, pipenv ${end} "
 if has_command apt; then
   apt update -y
-  apt install git python3 curl pipenv -y
+  apt install git python3 python3-pip pipenv -y
 elif has_command pacman; then
-  pacman -S git python3 --noconfirm --needed
+  pacman -S git python3 python-pip python-pipenv --noconfirm --needed
 fi
+
 python3 -m keyring --disable
 
 printf "\n\n ${grn} Cloning Repo ${end} "
@@ -61,27 +62,19 @@ cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
 rm -rf .git/ .gitignore
 chown -R $SUDO_USER:$SUDO_USER ./* .
 
-printf "\n\n ${grn} Installing Python and pip3 ${end} "
+printf "\n\n ${grn} Installing xclip, gpaste ${end} "
 if has_command apt; then
-  apt install python3-pip -y
+  apt install xclip gpaste -y
 elif has_command pacman; then
-  pacman -S python-pip --noconfirm --needed
+  pacman -S xclip gpaste --noconfirm --needed
 fi
-#
-printf "\n\n ${grn} Installing Requirements ${end} "
-#cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
-#pip3 install -r ./requirements.txt
 
-#printf "\n\n ${grn} Upgrading requests ${end} "
-#pip3 install --upgrade requests
-#pip3 install --upgrade requests
-
-printf "\n\n ${grn} Installing Xsel, Xclip, wl-clipboard, gpaste ${end} "
-if has_command apt; then
-  apt install xsel xclip wl-clipboard gpaste -y
-elif has_command pacman; then
-  pacman -S xsel xclip wl-clipboard gpaste --noconfirm --needed
-fi
+#printf "\n\n ${grn} Installing Xsel, Xclip, wl-clipboard, gpaste ${end} "
+#if has_command apt; then
+#  apt install xsel xclip wl-clipboard gpaste -y
+#elif has_command pacman; then
+#  pacman -S xsel xclip wl-clipboard gpaste --noconfirm --needed
+#fi
 
 printf "\n\n ${grn} Installing pyenv ${end} "
 if has_command apt; then
