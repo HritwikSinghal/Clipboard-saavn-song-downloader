@@ -39,7 +39,7 @@ Those who want to get started quickly and conveniently may install using the fol
 
 * Install ```curl``` before installing.
 
-* ```curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | bash```
+* ```curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | sudo bash```
 
 #### Run the app
 
