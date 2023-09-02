@@ -41,9 +41,10 @@ echo -e "
 
 "
 
-printf "\n\n ${grn} Installing git, python3 ${end} "
-if has_command apt-get; then
-  sudo apt-get install git python3 -y
+printf "\n\n ${grn} Installing git, python3, curl, pipenv ${end} "
+if has_command apt; then
+  sudo apt update -y
+  sudo apt install git python3 curl pipenv -y
 elif has_command pacman; then
   sudo pacman -S git python3 --noconfirm --needed
 fi
@@ -57,8 +58,8 @@ cd ~/Clipboard-saavn-song-downloader/ || exit
 rm -rf .git/
 
 printf "\n\n ${grn} Installing Python and pip3 ${end} "
-if has_command apt-get; then
-  sudo apt-get install python3-pip -y
+if has_command apt; then
+  sudo apt install python3-pip -y
 elif has_command pacman; then
   sudo pacman -S python-pip --noconfirm --needed
 fi
@@ -71,14 +72,20 @@ printf "\n\n ${grn} Upgrading requests ${end} "
 sudo pip3 install --upgrade requests
 pip3 install --upgrade requests
 
-printf "\n\n ${grn} Insatlling Xsel, Xclip, wl-clipboard, gpaste ${end} "
-if has_command apt-get; then
-  sudo apt-get install xsel xclip wl-clipboard gpaste -y
+printf "\n\n ${grn} Installing Xsel, Xclip, wl-clipboard, gpaste ${end} "
+if has_command apt; then
+  sudo apt install xsel xclip wl-clipboard gpaste -y
 elif has_command pacman; then
   sudo pacman -S xsel xclip wl-clipboard gpaste --noconfirm --needed
 fi
 
-pip3 install pipenv pyenv --yes
+printf "\n\n ${grn} Installing pyenv ${end} "
+if has_command apt; then
+  export PATH="$HOME/.pyenv/bin:$PATH" && eval "$(pyenv init --path)" && echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
+  curl https://pyenv.run | bash
+elif has_command pacman; then
+  sudo pacman -S pyenv --noconfirm --needed
+fi
 
 printf "\n ${grn} ------------------------------------------------- ${end} "
 cd $HOME/Clipboard-saavn-song-downloader/ || exit
