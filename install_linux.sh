@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 trap "exit" INT
 red=$'\e[1;31m'
 grn=$'\e[1;32m'
