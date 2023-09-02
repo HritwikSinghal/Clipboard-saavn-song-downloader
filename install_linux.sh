@@ -78,6 +78,8 @@ elif has_command pacman; then
   sudo pacman -S xsel xclip wl-clipboard gpaste --noconfirm --needed
 fi
 
+pip3 install pipenv pyenv --yes
+
 printf "\n ${grn} ------------------------------------------------- ${end} "
 cd $HOME/Clipboard-saavn-song-downloader/ || exit
 sudo chmod +x ./clipboard-saavn-song-downloader.py || exit
