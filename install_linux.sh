@@ -21,8 +21,8 @@ function has_command() {
   command -v $1 >/dev/null
 }
 
-# if running as root user then set current user as sudo user
-if [ "$EUID" -ne 0 ]
+# if running as root user then set current user as sudo user (only if sudo_user is there)
+if [ "$EUID" -ne 0 ] && [ -n "${SUDO_USER}" ]
 then
     export $USER=$SUDO_USER
     export $HOME=USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
