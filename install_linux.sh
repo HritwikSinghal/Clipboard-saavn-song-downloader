@@ -79,9 +79,11 @@ elif has_command pacman; then
 fi
 
 printf "\n ${grn} ------------------------------------------------- ${end} "
-cd ~/Clipboard-saavn-song-downloader/ || exit
+cd $HOME/Clipboard-saavn-song-downloader/ || exit
 sudo chmod +x ./clipboard-saavn-song-downloader.py || exit
-sudo ln -sf ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
+echo "pipenv run $HOME/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py" >> /usr/local/bin/saavn-downloader
+chmod +x /usr/local/bin/saavn-downloader
+#sudo ln -sf ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
 
 echo -e "
 
