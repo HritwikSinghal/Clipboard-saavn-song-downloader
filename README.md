@@ -38,6 +38,9 @@ And more!
 Those who want to get started quickly and conveniently may install using the following command
 
 * Install ```curl``` before installing.
+  * For Ubuntu/Debian users -> `sudo apt update && sudo apt install curl -y`
+  * For Arch Linux/Manjaro users (You guys already know right? :p) 
+    * anyways if you don't -> `sudo pacman -S curl`
 
 * ```curl -sSL https://raw.githubusercontent.com/HritwikSinghal/Clipboard-saavn-song-downloader/master/install_linux.sh | sudo bash```
 
