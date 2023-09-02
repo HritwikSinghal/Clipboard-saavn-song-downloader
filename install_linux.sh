@@ -55,7 +55,8 @@ cd /home/$SUDO_USER || exit
 rm -rf /home/$SUDO_USER/Clipboard-saavn-song-downloader/
 git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader /home/$SUDO_USER/Clipboard-saavn-song-downloader/
 cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
-rm -rf .git/
+rm -rf .git/ .gitignore
+chown -R $SUDO_USER:$SUDO_USER ./* .
 
 printf "\n\n ${grn} Installing Python and pip3 ${end} "
 if has_command apt; then
@@ -90,7 +91,7 @@ fi
 printf "\n ${grn} ------------------------------------------------- ${end} "
 cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
 chmod +x ./clipboard-saavn-song-downloader.py || exit
-echo "cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/"
+echo "cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/" > /usr/local/bin/saavn-downloader
 echo "pipenv run ./clipboard-saavn-song-downloader.py" >> /usr/local/bin/saavn-downloader
 chmod +x /usr/local/bin/saavn-downloader
 #ln -sf /home/$SUDO_USER/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
