@@ -90,7 +90,8 @@ fi
 printf "\n ${grn} ------------------------------------------------- ${end} "
 cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
 chmod +x ./clipboard-saavn-song-downloader.py || exit
-echo "pipenv run /home/$SUDO_USER/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py" >> /usr/local/bin/saavn-downloader
+echo "cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/"
+echo "pipenv run ./clipboard-saavn-song-downloader.py" >> /usr/local/bin/saavn-downloader
 chmod +x /usr/local/bin/saavn-downloader
 #ln -sf /home/$SUDO_USER/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
 
