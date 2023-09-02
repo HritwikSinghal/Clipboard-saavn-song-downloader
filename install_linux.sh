@@ -51,10 +51,10 @@ fi
 python3 -m keyring --disable
 
 printf "\n\n ${grn} Cloning Repo ${end} "
-cd ~ || exit
-rm -rf ~/Clipboard-saavn-song-downloader/
-git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader ~/Clipboard-saavn-song-downloader/
-cd ~/Clipboard-saavn-song-downloader/ || exit
+cd /home/$SUDO_USER || exit
+rm -rf /home/$SUDO_USER/Clipboard-saavn-song-downloader/
+git clone --depth 1 -b master https://github.com/HritwikSinghal/Clipboard-saavn-song-downloader /home/$SUDO_USER/Clipboard-saavn-song-downloader/
+cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
 rm -rf .git/
 
 printf "\n\n ${grn} Installing Python and pip3 ${end} "
@@ -65,7 +65,7 @@ elif has_command pacman; then
 fi
 
 printf "\n\n ${grn} Installing Requirements ${end} "
-cd ~/Clipboard-saavn-song-downloader/ || exit
+cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
 pip3 install -r ./requirements.txt
 
 printf "\n\n ${grn} Upgrading requests ${end} "
@@ -81,18 +81,18 @@ fi
 
 printf "\n\n ${grn} Installing pyenv ${end} "
 if has_command apt; then
-  export PATH="$HOME/.pyenv/bin:$PATH" && eval "$(pyenv init --path)" && echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
+  export PATH="/home/$SUDO_USER/.pyenv/bin:$PATH" && eval "$(pyenv init --path)" && echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> /home/$SUDO_USER/.bashrc
   curl https://pyenv.run | bash
 elif has_command pacman; then
   pacman -S pyenv --noconfirm --needed
 fi
 
 printf "\n ${grn} ------------------------------------------------- ${end} "
-cd $HOME/Clipboard-saavn-song-downloader/ || exit
+cd /home/$SUDO_USER/Clipboard-saavn-song-downloader/ || exit
 chmod +x ./clipboard-saavn-song-downloader.py || exit
-echo "pipenv run $HOME/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py" >> /usr/local/bin/saavn-downloader
+echo "pipenv run /home/$SUDO_USER/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py" >> /usr/local/bin/saavn-downloader
 chmod +x /usr/local/bin/saavn-downloader
-#ln -sf ~/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
+#ln -sf /home/$SUDO_USER/Clipboard-saavn-song-downloader/clipboard-saavn-song-downloader.py /usr/local/bin/saavn-downloader
 
 echo -e "
 
